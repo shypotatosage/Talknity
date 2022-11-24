@@ -1,4 +1,4 @@
-package com.imtuc.talknity
+package com.imtuc.talknity.view
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity

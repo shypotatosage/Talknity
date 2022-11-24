@@ -1,4 +1,4 @@
-package com.imtuc.talknity.ui.theme
+package com.imtuc.talknity.view.ui.theme
 
 import android.app.Activity
 import android.os.Build
