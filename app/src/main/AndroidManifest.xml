@@ -17,21 +17,22 @@
             android:exported="true"
             android:label="@string/title_activity_community"
             android:theme="@style/Theme.Talknity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
         <activity
             android:name=".view.CreateCommunityActivity"
-            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"
             android:label="@string/title_activity_create_community"
             android:theme="@style/Theme.Talknity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
