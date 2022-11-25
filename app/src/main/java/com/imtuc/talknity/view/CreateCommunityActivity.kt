@@ -1,9 +1,13 @@
 package com.imtuc.talknity.view
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -19,17 +23,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,10 +49,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.model.CommunityCategory
-import com.imtuc.talknity.view.ui.theme.Gray300
-import com.imtuc.talknity.view.ui.theme.Orange500
-import com.imtuc.talknity.view.ui.theme.SoftBlack
-import com.imtuc.talknity.view.ui.theme.TalknityTheme
+import com.imtuc.talknity.view.ui.theme.*
 
 class CreateCommunityActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,9 +89,19 @@ fun Greeting2(name: String) {
     var expanded by remember {
         mutableStateOf(false)
     }
+    
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
 
-    var textfieldSize by remember {
-        mutableStateOf(Size.Zero)
+    val context = LocalContext.current
+    
+    val bitmap = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
     }
 
     var categoryList = arrayListOf<CommunityCategory>(CommunityCategory("1", "All Categories"), CommunityCategory("2", "Art"))
@@ -137,9 +154,74 @@ fun Greeting2(name: String) {
                     color = Orange500
                 )
             }
+
+            if (bitmap.value == null) {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 24.dp, 0.dp, 0.dp)
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .size(160.dp, 160.dp)
+                            .background(color = GreyishWhite)
+                            .align(alignment = Alignment.CenterVertically)
+                            .border(width = 0.6.dp, color = Gray300, shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        color = GreyishWhite
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.addimageicon),
+                                contentDescription = "Add Image",
+                                modifier = Modifier
+                                    .height(20.dp)
+                            )
+                            Text(
+                                text = "Upload Community's Logo",
+                                fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                                color = Gray300,
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier
+                                    .padding(8.dp, 8.dp, 8.dp, 0.dp)
+                            )
+                        }
+                    }
+                }
+            } else {
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 24.dp, 0.dp, 0.dp)
+                ) {
+                    Surface(
+                        modifier = Modifier
+                            .size(160.dp, 160.dp)
+                            .background(color = GreyishWhite)
+                            .align(alignment = Alignment.CenterVertically)
+                            .border(width = 0.6.dp, color = Gray300, shape = RoundedCornerShape(16.dp)),
+                        shape = RoundedCornerShape(16.dp),
+                        color = GreyishWhite
+                    ) {
+                        Image(
+                            bitmap = bitmap.value!!.asImageBitmap(),
+                            contentDescription = "Add Image"
+                        )
+                    }
+                }
+            }
+
             Column(
                 modifier = Modifier
-                    .padding(24.dp, 0.dp, 24.dp, 0.dp)
+                    .padding(24.dp, 0.dp)
             ) {
                 Text(
                     text = "Community's Name",
@@ -147,7 +229,7 @@ fun Greeting2(name: String) {
                     fontSize = 24.sp,
                     color = SoftBlack,
                     modifier = Modifier
-                        .padding(0.dp, 15.dp, 0.dp, 10.dp)
+                        .padding(0.dp, 24.dp, 0.dp, 10.dp)
                 )
                 BasicTextField(
                     value = communityName.value,
@@ -194,90 +276,106 @@ fun Greeting2(name: String) {
                         fontSize = 16.sp
                     )
                 )
-                Text(
-                    text = "Category",
-                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                    fontSize = 24.sp,
-                    color = SoftBlack,
-                    modifier = Modifier
-                        .padding(0.dp, 15.dp, 0.dp, 10.dp)
-                )
-                BasicTextField(
-                    value = selectedCategory.value,
-                    onValueChange = {
-                        selectedCategory.value = it
-                    },
-                    enabled = false,
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            BorderStroke(
-                                width = 0.7.dp,
-                                color = Gray300
-                            ),
-                            shape = RoundedCornerShape(25.dp)
-                        ),
-                    decorationBox = { innerTextField ->
-                        TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            textColor = SoftBlack
-                        )
-                        Box(
-                            modifier = Modifier
-                                .padding(16.dp, 12.dp)
-                                .fillMaxWidth()
-                        ) {
-                            if (selectedCategory.value.isEmpty()) {
-                                Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.fillMaxWidth()) {
-                                    Text(
-                                        text = "Select Category",
-                                        color = Gray300,
-                                        fontSize = 16.sp,
-                                        fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                    )
-                                    Image(
-                                        painter = painterResource(id = R.drawable.arrow_back),
-                                        contentDescription = "Dropdown",
-                                        modifier = Modifier
-                                            .height(24.dp)
-                                    )
-                                }
-                            } else {
-                                Row(horizontalArrangement = Arrangement.End,
-                                    modifier = Modifier.fillMaxWidth()) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.arrow_back),
-                                        contentDescription = "Dropdown",
-                                        modifier = Modifier
-                                            .height(36.dp)
-                                    )
-                                }
-                            }
-                            innerTextField()  //<-- Add this
-                        }
-                    },
-                    textStyle = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 16.sp
+                Column() {
+                    Text(
+                        text = "Category",
+                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                        fontSize = 24.sp,
+                        color = SoftBlack,
+                        modifier = Modifier
+                            .padding(0.dp, 15.dp, 0.dp, 10.dp)
                     )
-                )
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false },
-                    modifier = Modifier
-                        .width(with(LocalDensity.current) { textfieldSize.width.toDp() })
-                ) {
-                    categoryList.forEach { category ->
-                        DropdownMenuItem(onClick = {
-                            selectedCategory.value = category.name.toString()
-                            expanded = false
-                        }) {
-                            Text(text = category.name)
+                    BasicTextField(
+                        value = selectedCategory.value,
+                        onValueChange = {
+                            selectedCategory.value = it
+                        },
+                        enabled = false,
+                        singleLine = true,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                BorderStroke(
+                                    width = 0.7.dp,
+                                    color = Gray300
+                                ),
+                                shape = RoundedCornerShape(25.dp)
+                            ),
+                        decorationBox = { innerTextField ->
+                            TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                textColor = SoftBlack
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .padding(16.dp, 12.dp)
+                                    .fillMaxWidth()
+                            ) {
+                                if (selectedCategory.value.isEmpty()) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            text = "Select Category",
+                                            color = Gray300,
+                                            fontSize = 16.sp,
+                                            fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                        )
+                                        Image(
+                                            painter = painterResource(id = R.drawable.dropdown),
+                                            contentDescription = "Dropdown",
+                                            modifier = Modifier
+                                                .height(12.dp)
+                                                .clickable {
+                                                    expanded = !expanded
+                                                }
+                                        )
+                                    }
+                                } else {
+                                    Row(
+                                        horizontalArrangement = Arrangement.End,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.dropdown),
+                                            contentDescription = "Dropdown",
+                                            modifier = Modifier
+                                                .height(12.dp)
+                                                .clickable {
+                                                    expanded = !expanded
+                                                }
+                                        )
+                                    }
+                                }
+                                innerTextField()  //<-- Add this
+                            }
+                        },
+                        textStyle = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                            fontSize = 16.sp
+                        )
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false },
+                        modifier = Modifier
+                            .background(color = GreyishWhite)
+                            .fillMaxWidth(0.875f)
+                            .align(alignment = Alignment.CenterHorizontally)
+                    ) {
+                        categoryList.forEach { category ->
+                            DropdownMenuItem(onClick = {
+                                selectedCategory.value = category.name.toString()
+                                expanded = false
+                            }) {
+                                Text(text = category.name, modifier = Modifier.fillMaxWidth())
+                            }
                         }
                     }
                 }
@@ -387,6 +485,36 @@ fun Greeting2(name: String) {
                         fontSize = 16.sp
                     )
                 )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(0.dp, 24.dp, 0.dp, 0.dp)
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.createcommunityimg),
+                        contentDescription = "Create Community Image",
+                        modifier = Modifier
+                            .padding(0.dp, 48.dp, 0.dp, 0.dp)
+                    )
+
+                    Row(horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding()) {
+                        Button(onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .padding(8.dp, 0.dp),
+                            shape = RoundedCornerShape(50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)) {
+                            Text(
+                                text = "Create Community",
+                                fontSize = 20.sp,
+                                fontFamily = FontFamily(Font(R.font.opensans_bold)),
+                                color = GreyishWhite
+                            )
+                        }
+                    }
+                }
             }
         }
     }
