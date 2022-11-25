@@ -62,7 +62,6 @@ fun SplashScreen() {
             .fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
-
     ) {
         Image(
             painter = painterResource(id = R.drawable.talknitylogo),
@@ -70,26 +69,47 @@ fun SplashScreen() {
             modifier = Modifier
                 .height(150.dp)
         )
-        Column(
+
+        Row(
             modifier = Modifier
-                .padding(0.dp, 20.dp, 0.dp, 0.dp)
+                .padding(50.dp, 20.dp, 0.dp, 0.dp)
                 .fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
         ) {
-            Text(
-                text = "Find Your",
-                fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                fontSize = 30.sp,
-                color = SoftBlack
-            )
-            Text(
-                text = "Community",
-                fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                fontSize = 30.sp,
-                color = Orange500
+            Column() {
+                Text(
+                    text = "Find Your",
+                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                    fontSize = 30.sp,
+                    color = SoftBlack
+                )
+                Text(
+                    text = "Community",
+                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                    fontSize = 30.sp,
+                    color = Orange500
+                )
+            }
+            Image(
+                painter = painterResource(id = R.drawable.splashback),
+                contentDescription = "Back",
+                modifier = Modifier
+                    .padding(20.dp, 15.dp, 0.dp, 0.dp)
+                    .height(50.dp),
             )
         }
+    }
+    Column(
+        modifier = Modifier
+        .fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Image(
+            painter = painterResource(id = R.drawable.splash),
+            contentDescription = "Back",
+            modifier = Modifier
+                .padding(50.dp, 50.dp, 0.dp, 0.dp)
+                .size(300.dp)
+        )
     }
 }
 
