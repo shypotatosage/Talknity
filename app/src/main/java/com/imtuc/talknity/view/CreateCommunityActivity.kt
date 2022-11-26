@@ -109,6 +109,7 @@ fun CreateCommunity() {
 
     var categoryList = arrayListOf<CommunityCategory>(CommunityCategory("1", "All Categories"), CommunityCategory("2", "Art"))
 
+
     imageUri?.let {
         if (Build.VERSION.SDK_INT < 28) {
             bitmap.value = MediaStore.Images
