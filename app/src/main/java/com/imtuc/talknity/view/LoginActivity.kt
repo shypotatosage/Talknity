@@ -1,6 +1,7 @@
 package com.imtuc.talknity.view
 
 import android.os.Bundle
+import android.text.style.UnderlineSpan
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -34,6 +35,19 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.view.ui.theme.*
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +59,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CreatePost()
+                    Login()
                 }
             }
         }
@@ -64,6 +78,21 @@ fun Login() {
     var password = remember {
         mutableStateOf("")
     }
+
+    var passwordStar = password
+
+    var passwordVisible = remember {
+        mutableStateOf(false)
+    }
+
+    var test = countChar(password.value)
+
+    val image = if (passwordVisible.value) {
+        Icons.Filled.Visibility
+    } else {
+        Icons.Filled.VisibilityOff
+    }
+
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
             modifier = Modifier
@@ -119,7 +148,7 @@ fun Login() {
                         ) {
                             if (loginUserOrEmail.value.isEmpty()) {
                                 Text(
-                                    text = "Username / Email",
+                                    text = password.value,
                                     color = Gray300,
                                     fontSize = 16.sp,
                                     fontFamily = FontFamily(Font(R.font.opensans_regular))
@@ -136,8 +165,9 @@ fun Login() {
             }
             Column(
                 modifier = Modifier
-                    .padding(24.dp, 30.dp)
+                    .padding(24.dp, 30.dp),
             ) {
+
                 BasicTextField(
                     value = password.value,
                     onValueChange = {
@@ -161,21 +191,48 @@ fun Login() {
                             focusedIndicatorColor = Color.Transparent,
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent,
-                            textColor = SoftBlack
+                            textColor = SoftBlack,
                         )
                         Box(
                             modifier = Modifier
-                                .padding(16.dp, 12.dp)
+                                .padding(16.dp, 0.dp),
                         ) {
-                            if (password.value.isEmpty()) {
-                                Text(
-                                    text = "Password",
-                                    color = Gray300,
-                                    fontSize = 16.sp,
-                                    fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(0.dp, 0.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                if (password.value.isEmpty()) {
+                                    Text(
+                                        text = "Password",
+                                        color = Gray300,
+                                        fontSize = 16.sp,
+                                        fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                    )
+                                    IconButton(onClick = {
+                                        passwordVisible.value = !passwordVisible.value
+//                                        passwordStar.value = password.value
+                                    }) {
+                                        Icon(imageVector = image, "")
+                                    }
+                                } else {
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        innerTextField()
+                                        IconButton(onClick = {
+                                            passwordVisible.value = !passwordVisible.value
+//                                            passwordStar.value = test
+                                        }) {
+                                            Icon(imageVector = image, "")
+                                        }
+                                    }
+                                }
                             }
-                            innerTextField()  //<-- Add this
                         }
                     },
                     textStyle = TextStyle(
@@ -209,8 +266,7 @@ fun Login() {
             }
             Column(
                 modifier = Modifier
-                    .clickable { CreatePostActivity() }
-                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 50.dp, 0.dp, 50.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -230,6 +286,19 @@ fun Login() {
             }
         }
     }
+}
+
+fun countChar(text: String): String {
+    var count = 0
+    var result = ""
+    for (Char in text) {
+        count++
+    }
+    while (count > 0) {
+        result += "*"
+        count--
+    }
+    return result
 }
 
 
