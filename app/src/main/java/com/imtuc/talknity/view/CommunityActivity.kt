@@ -64,6 +64,12 @@ fun EnterCommunity() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        Image(
+            painter = painterResource(id = R.drawable.puzzlepeople),
+            contentDescription = "Back",
+            modifier = Modifier
+                .height(80.dp)
+        )
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
