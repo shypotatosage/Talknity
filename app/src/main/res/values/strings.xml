@@ -3,4 +3,5 @@
     <string name="title_activity_create_community">CreateCommunityActivity</string>
     <string name="title_activity_community">CommunityActivity</string>
     <string name="title_activity_create_post">CreatePostActivity</string>
+    <string name="title_activity_individual_post">IndividualPostActivity</string>
 </resources>
