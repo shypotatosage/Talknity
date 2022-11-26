@@ -22,9 +22,9 @@
                 android:value="" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".view.CreatePostActivity"
@@ -56,8 +56,18 @@
         </activity>
         <activity
             android:name=".view.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_splash"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+
+        </activity>
+        <activity
+            android:name=".view.ProfileActivity"
+            android:exported="true"
+            android:label="@string/title_activity_profile"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
