@@ -56,7 +56,7 @@ fun SplashScreen() {
     Column(
         modifier = Modifier
             .paint(
-                painter = painterResource(id = R.drawable.bg1),
+                painter = painterResource(id = R.drawable.splashscreen),
                 contentScale = ContentScale.Crop
             )
             .fillMaxSize(),
@@ -102,12 +102,12 @@ fun SplashScreen() {
     }
     Column(
         modifier = Modifier
-            .fillMaxSize(),
+            .offset(x=70.dp,y=500.dp),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.splash),
+            painter = painterResource(id = R.drawable.puzzlepeople),
             contentDescription = "Back",
             modifier = Modifier
                 .padding(100.dp, 50.dp, 0.dp, 0.dp)
