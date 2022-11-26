@@ -35,7 +35,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.view.ui.theme.*
 
-class LoginActivity : ComponentActivity() {
+class RegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -54,10 +54,14 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun Login() {
+fun Register() {
     val context = LocalContext.current
 
-    var loginUserOrEmail = remember {
+    var email = remember {
+        mutableStateOf("")
+    }
+
+    var username = remember {
         mutableStateOf("")
     }
 
@@ -89,9 +93,9 @@ fun Login() {
                     .padding(24.dp, 0.dp)
             ) {
                 BasicTextField(
-                    value = loginUserOrEmail.value,
+                    value = email.value,
                     onValueChange = {
-                        loginUserOrEmail.value = it
+                        email.value = it
                     },
                     enabled = true,
                     singleLine = true,
@@ -117,9 +121,9 @@ fun Login() {
                             modifier = Modifier
                                 .padding(16.dp, 12.dp)
                         ) {
-                            if (loginUserOrEmail.value.isEmpty()) {
+                            if (email.value.isEmpty()) {
                                 Text(
-                                    text = "Username / Email",
+                                    text = "Email",
                                     color = Gray300,
                                     fontSize = 16.sp,
                                     fontFamily = FontFamily(Font(R.font.opensans_regular))
@@ -136,7 +140,57 @@ fun Login() {
             }
             Column(
                 modifier = Modifier
-                    .padding(24.dp, 30.dp)
+                    .padding(24.dp, 30.dp, 24.dp, 0.dp)
+            ) {
+                BasicTextField(
+                    value = username.value,
+                    onValueChange = {
+                        username.value = it
+                    },
+                    enabled = true,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .border(
+                            BorderStroke(
+                                width = 0.7.dp,
+                                color = Gray300
+                            ),
+                            shape = RoundedCornerShape(25.dp)
+                        )
+                        .navigationBarsWithImePadding(),
+                    decorationBox = { innerTextField ->
+                        TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent,
+                            disabledIndicatorColor = Color.Transparent,
+                            textColor = SoftBlack
+                        )
+                        Box(
+                            modifier = Modifier
+                                .padding(16.dp, 12.dp)
+                        ) {
+                            if (username.value.isEmpty()) {
+                                Text(
+                                    text = "Username",
+                                    color = Gray300,
+                                    fontSize = 16.sp,
+                                    fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                )
+                            }
+                            innerTextField()  //<-- Add this
+                        }
+                    },
+                    textStyle = TextStyle(
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 16.sp
+                    )
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .padding(24.dp, 30.dp, 24.dp, 30.dp)
             ) {
                 BasicTextField(
                     value = password.value,
@@ -200,7 +254,7 @@ fun Login() {
                     Text(
                         modifier = Modifier
                             .padding(8.dp, 0.dp),
-                        text = "Login",
+                        text = "Register",
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.opensans_bold)),
                         color = GreyishWhite
@@ -209,20 +263,20 @@ fun Login() {
             }
             Column(
                 modifier = Modifier
-                    .clickable { CreatePostActivity() }
-                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
+                    .clickable { LoginActivity() }
+                    .padding(0.dp, 30.dp, 0.dp, 0.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Don’t Have an Account Yet?",
+                    text = "Already Have an Account?",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                     fontSize = 18.sp,
                     color = SoftBlack
                 )
                 Text(
-                    text = "Register Here",
+                    text = "Login Here",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                     fontSize = 18.sp,
                     color = Orange500,
@@ -235,8 +289,8 @@ fun Login() {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginPreview() {
+fun RegisterPreview() {
     TalknityTheme {
-        Login()
+        Register()
     }
 }

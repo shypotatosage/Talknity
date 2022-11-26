@@ -72,8 +72,10 @@ fun SplashScreen() {
 
         Row(
             modifier = Modifier
-                .padding(50.dp, 20.dp, 0.dp, 0.dp)
+                .padding(0.dp, 20.dp, 0.dp, 0.dp)
                 .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
         ) {
             Column() {
                 Text(
@@ -100,37 +102,23 @@ fun SplashScreen() {
     }
     Column(
         modifier = Modifier
-        .fillMaxSize(),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Image(
             painter = painterResource(id = R.drawable.splash),
             contentDescription = "Back",
             modifier = Modifier
-                .padding(50.dp, 50.dp, 0.dp, 0.dp)
+                .padding(100.dp, 50.dp, 0.dp, 0.dp)
                 .size(300.dp)
         )
     }
 }
 
-
-@Composable
-fun Greeting3() {
-    Column(
-        modifier = Modifier
-            .paint(
-                painter = painterResource(id = R.drawable.bg1),
-                contentScale = ContentScale.Crop
-            )
-            .fillMaxSize()
-    ) {
-
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
-fun DefaultPreview() {
+fun SplashPreview() {
     TalknityTheme {
         SplashScreen()
     }
