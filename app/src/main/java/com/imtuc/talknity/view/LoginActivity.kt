@@ -292,7 +292,7 @@ fun Login() {
                 )
                 Button(
                     onClick = {
-                        context.startActivity(Intent(context, MainActivity::class.java))
+                        context.startActivity(Intent(context, HomeActivity::class.java))
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 )

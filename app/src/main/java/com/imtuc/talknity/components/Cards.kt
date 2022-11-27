@@ -26,7 +26,7 @@ fun CommunityCategoryCard() {
         shadowElevation = 8.dp,
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
-            .padding(0.dp, 16.dp)
+            .padding(13.dp, 0.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -61,13 +61,13 @@ fun IndividualCommunity() {
         shadowElevation = 8.dp,
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
-            .padding(0.dp, 16.dp)
+            .padding(0.dp, 13.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .height(150.dp)
-            .padding(10.dp,13.dp),
+                .padding(10.dp, 13.dp),
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.Start
         ) {
@@ -87,16 +87,16 @@ fun IndividualCommunity() {
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(10.dp, 0.dp,0.dp,0.dp)
+                    .padding(10.dp, 0.dp, 0.dp, 0.dp)
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.Top,
             ) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-                ){
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = "BasCom",
                         textAlign = TextAlign.Start,
@@ -108,20 +108,22 @@ fun IndividualCommunity() {
                         contentDescription = "Back",
                         modifier = Modifier
                             .size(30.dp)
+                            .padding(5.dp,0.dp)
                     )
                     Text(
                         text = "50 Members",
                         textAlign = TextAlign.Start,
-                        fontSize = 16.sp,
+                        fontSize = 13.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                     )
                 }
                 Text(
-                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut",
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
                     modifier = Modifier
+                        .padding(0.dp, 5.dp)
                         .fillMaxHeight(),
                     textAlign = TextAlign.Start,
-                    fontSize = 15.sp,
+                    fontSize = 13.sp,
                     fontFamily = FontFamily(Font(R.font.opensans_semibold)),
                 )
             }
