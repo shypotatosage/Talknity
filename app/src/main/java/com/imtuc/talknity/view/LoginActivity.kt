@@ -111,13 +111,14 @@ fun Login() {
                 .statusBarsPadding()
                 .navigationBarsWithImePadding()
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             Image(
                 painter = painterResource(id = R.drawable.talknitylogo),
                 contentDescription = "Back",
                 modifier = Modifier
-                    .padding(0.dp, 150.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 100.dp, 0.dp, 0.dp)
                     .size(300.dp)
             )
             Column(
@@ -236,7 +237,7 @@ fun Login() {
                                             passwordVisible.value = !passwordVisible.value
                                             if (passwordVisible.value) {
                                                 password.value = passwordNoStar.value
-                                            }else{
+                                            } else {
                                                 password.value = passwordStar
                                             }
                                         }) {
@@ -278,7 +279,7 @@ fun Login() {
             }
             Column(
                 modifier = Modifier
-                    .padding(0.dp, 50.dp, 0.dp, 50.dp)
+                    .padding(0.dp, 30.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -291,7 +292,7 @@ fun Login() {
                 )
                 Button(
                     onClick = {
-                        context.startActivity(Intent(context, RegisterActivity::class.java))
+                        context.startActivity(Intent(context, MainActivity::class.java))
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 )

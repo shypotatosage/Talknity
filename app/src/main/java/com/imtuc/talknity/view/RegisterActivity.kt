@@ -103,13 +103,14 @@ fun Register() {
                 .statusBarsPadding()
                 .navigationBarsWithImePadding()
                 .verticalScroll(rememberScrollState()),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
         ) {
             Image(
                 painter = painterResource(id = R.drawable.talknitylogo),
                 contentDescription = "Back",
                 modifier = Modifier
-                    .padding(0.dp, 150.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 50.dp, 0.dp, 0.dp)
                     .size(300.dp)
             )
             Column(
@@ -322,7 +323,7 @@ fun Register() {
             }
             Column(
                 modifier = Modifier
-                    .padding(0.dp, 30.dp, 0.dp, 0.dp)
+                    .padding(0.dp, 30.dp)
                     .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.imtuc.talknity.R
 import com.imtuc.talknity.model.CommunityCategory
 
-
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun CommunityCategoryCard() {
     Surface(
@@ -52,9 +52,10 @@ fun CommunityCategoryCard() {
         }
     }
 }
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DiscussionCard() {
+fun IndividualCommunity() {
     Surface(
         shape = RoundedCornerShape(16.dp),
         shadowElevation = 8.dp,
@@ -62,27 +63,68 @@ fun DiscussionCard() {
             .wrapContentSize(align = Alignment.Center)
             .padding(0.dp, 16.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
+        Row(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .height(150.dp),
-            verticalArrangement = Arrangement.Center
+                .height(150.dp)
+            .padding(10.dp,13.dp),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.Start
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ownedcommunity),
-                contentDescription = "Back",
+            Column(
+                horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .height(40.dp)
-            )
-            Text(
-                text = "All Categories",
-                textAlign = TextAlign.Center,
-                fontSize = 20.sp,
-                fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Top,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ownedcommunity),
+                    contentDescription = "Back",
+                    modifier = Modifier
+                        .size(70.dp)
+                )
+            }
+            Column(
+                horizontalAlignment = Alignment.Start,
                 modifier = Modifier
-                    .padding(12.dp, 16.dp, 12.dp, 0.dp)
-            )
+                    .padding(10.dp, 0.dp,0.dp,0.dp)
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Top,
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+                ){
+                    Text(
+                        text = "BasCom",
+                        textAlign = TextAlign.Start,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+                    )
+                    Image(
+                        painter = painterResource(id = R.drawable.ownedcommunity),
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .size(30.dp)
+                    )
+                    Text(
+                        text = "50 Members",
+                        textAlign = TextAlign.Start,
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+                    )
+                }
+                Text(
+                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut",
+                    modifier = Modifier
+                        .fillMaxHeight(),
+                    textAlign = TextAlign.Start,
+                    fontSize = 15.sp,
+                    fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                )
+            }
         }
     }
 }
