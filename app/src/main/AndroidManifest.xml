@@ -31,6 +31,20 @@
                 android:value="" />
         </activity>
         <activity
+            android:name=".view.RegisterActivity"
+            android:exported="true"
+            android:label="@string/title_activity_register"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".view.CreatePostActivity"
             android:exported="false"
             android:label="@string/title_activity_create_post"
@@ -41,18 +55,12 @@
         </activity>
         <activity
             android:name=".view.CommunityActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/title_activity_community"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".view.CreateCommunityActivity"
@@ -66,7 +74,7 @@
         </activity>
         <activity
             android:name=".view.MainActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/title_activity_splash"
             android:theme="@style/Theme.Talknity">
             <meta-data
@@ -76,7 +84,7 @@
         </activity>
         <activity
             android:name=".view.ProfileActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="@string/title_activity_profile"
             android:theme="@style/Theme.Talknity">
             <meta-data

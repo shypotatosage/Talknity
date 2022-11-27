@@ -5,6 +5,7 @@
     <string name="title_activity_create_post">CreatePostActivity</string>
     <string name="title_activity_individual_post">IndividualPostActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
 </resources>

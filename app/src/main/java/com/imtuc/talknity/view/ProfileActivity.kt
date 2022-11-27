@@ -119,7 +119,7 @@ fun Profile() {
                     contentDescription = "Back",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
-                        .padding(0.dp, 70.dp, 0.dp, 0.dp)
+                        .padding(0.dp, 40.dp, 0.dp, 0.dp)
                         .size(180.dp)
                         .clip(CircleShape)
                 )
@@ -136,7 +136,7 @@ fun Profile() {
                         .fillMaxWidth()
                         .padding(24.dp, 24.dp, 24.dp, 0.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Column(
                         modifier = Modifier

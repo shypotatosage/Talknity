@@ -1,5 +1,6 @@
 package com.imtuc.talknity.view
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.style.UnderlineSpan
 import androidx.activity.ComponentActivity
@@ -79,13 +80,19 @@ fun Login() {
         mutableStateOf("")
     }
 
-    var passwordStar = password
+    var passwordNoStar = remember {
+        mutableStateOf("")
+    }
+
+    var passwordStar = countChar(passwordNoStar.value)
+
+    var passwordValue = remember {
+        mutableStateOf("")
+    }
 
     var passwordVisible = remember {
         mutableStateOf(false)
     }
-
-    var test = countChar(password.value)
 
     val image = if (passwordVisible.value) {
         Icons.Filled.Visibility
@@ -148,7 +155,7 @@ fun Login() {
                         ) {
                             if (loginUserOrEmail.value.isEmpty()) {
                                 Text(
-                                    text = password.value,
+                                    text = "Username / Email",
                                     color = Gray300,
                                     fontSize = 16.sp,
                                     fontFamily = FontFamily(Font(R.font.opensans_regular))
@@ -172,6 +179,8 @@ fun Login() {
                     value = password.value,
                     onValueChange = {
                         password.value = it
+                        passwordNoStar.value = it
+                        passwordValue.value = it
                     },
                     enabled = true,
                     singleLine = true,
@@ -213,7 +222,6 @@ fun Login() {
                                     )
                                     IconButton(onClick = {
                                         passwordVisible.value = !passwordVisible.value
-//                                        passwordStar.value = password.value
                                     }) {
                                         Icon(imageVector = image, "")
                                     }
@@ -226,7 +234,11 @@ fun Login() {
                                         innerTextField()
                                         IconButton(onClick = {
                                             passwordVisible.value = !passwordVisible.value
-//                                            passwordStar.value = test
+                                            if (passwordVisible.value) {
+                                                password.value = passwordNoStar.value
+                                            }else{
+                                                password.value = passwordStar
+                                            }
                                         }) {
                                             Icon(imageVector = image, "")
                                         }
@@ -277,12 +289,20 @@ fun Login() {
                     fontSize = 18.sp,
                     color = SoftBlack
                 )
-                Text(
-                    text = "Register Here",
-                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                    fontSize = 18.sp,
-                    color = Orange500,
+                Button(
+                    onClick = {
+                        context.startActivity(Intent(context, RegisterActivity::class.java))
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
                 )
+                {
+                    Text(
+                        text = "Register Here",
+                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                        fontSize = 18.sp,
+                        color = Orange500,
+                    )
+                }
             }
         }
     }
