@@ -65,10 +65,10 @@ fun EnterCommunity() {
         verticalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = painterResource(id = R.drawable.puzzlepeople),
-            contentDescription = "Back",
+            painter = painterResource(id = R.drawable.community1pageimage),
+            contentDescription = "Community Corner",
             modifier = Modifier
-                .height(80.dp)
+                .height(250.dp)
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -82,7 +82,7 @@ fun EnterCommunity() {
                 fontSize = 30.sp,
                 color = Orange500,
                 modifier = Modifier
-                    .padding(0.dp, 15.dp, 0.dp, 10.dp)
+                    .padding(0.dp, 30.dp, 0.dp, 10.dp)
             )
             Text(
                 text = "Corner",
@@ -90,7 +90,7 @@ fun EnterCommunity() {
                 fontSize = 30.sp,
                 color = SoftBlack,
                 modifier = Modifier
-                    .padding(0.dp, 15.dp, 0.dp, 10.dp)
+                    .padding(0.dp, 30.dp, 0.dp, 10.dp)
             )
         }
         Row(

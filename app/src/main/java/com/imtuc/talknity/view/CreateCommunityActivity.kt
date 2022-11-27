@@ -182,11 +182,12 @@ fun CreateCommunity() {
                     Surface(
                         modifier = Modifier
                             .size(160.dp, 160.dp)
-                            .background(color = GreyishWhite)
+                            .background(color = Color.White)
                             .align(alignment = Alignment.CenterVertically)
                             .border(width = 0.6.dp, color = Gray300, shape = RoundedCornerShape(16.dp)),
                         shape = RoundedCornerShape(16.dp),
-                        color = GreyishWhite
+                        color = Color.White,
+                        shadowElevation = 5.dp
                     ) {
                         Column(
                             modifier = Modifier
@@ -253,76 +254,24 @@ fun CreateCommunity() {
                     modifier = Modifier
                         .padding(0.dp, 24.dp, 0.dp, 10.dp)
                 )
-                BasicTextField(
-                    value = communityName.value,
-                    onValueChange = {
-                        communityName.value = it
-                    },
-                    enabled = true,
-                    singleLine = true,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            BorderStroke(
-                                width = 0.7.dp,
-                                color = Gray300
-                            ),
-                            shape = RoundedCornerShape(25.dp)
-                        )
-                        .navigationBarsWithImePadding(),
-                    decorationBox = { innerTextField ->
-                        TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            textColor = SoftBlack
-                        )
-                        Box(
-                            modifier = Modifier
-                                .padding(16.dp, 12.dp)
-                        ) {
-                            if (communityName.value.isEmpty()) {
-                                Text(
-                                    text = "Community's Name",
-                                    color = Gray300,
-                                    fontSize = 16.sp,
-                                    fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                )
-                            }
-                            innerTextField()  //<-- Add this
-                        }
-                    },
-                    textStyle = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 16.sp
-                    )
-                )
-                Column {
-                    Text(
-                        text = "Category",
-                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                        fontSize = 24.sp,
-                        color = SoftBlack,
-                        modifier = Modifier
-                            .padding(0.dp, 15.dp, 0.dp, 10.dp)
-                    )
+                Surface(
+                    border = BorderStroke(
+                        width = 0.5.dp,
+                        color = Gray300
+                    ),
+                    shape = RoundedCornerShape(25.dp),
+                    shadowElevation = 4.dp
+                ) {
                     BasicTextField(
-                        value = selectedCategory.value,
+                        value = communityName.value,
                         onValueChange = {
-                            selectedCategory.value = it
+                            communityName.value = it
                         },
-                        enabled = false,
+                        enabled = true,
                         singleLine = true,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(
-                                BorderStroke(
-                                    width = 0.7.dp,
-                                    color = Gray300
-                                ),
-                                shape = RoundedCornerShape(25.dp)
-                            ),
+                            .navigationBarsWithImePadding(),
                         decorationBox = { innerTextField ->
                             TextFieldDefaults.textFieldColors(
                                 backgroundColor = Color.Transparent,
@@ -334,52 +283,16 @@ fun CreateCommunity() {
                             Box(
                                 modifier = Modifier
                                     .padding(16.dp, 12.dp)
-                                    .fillMaxWidth()
-                                    .fillMaxHeight()
-                                    .align(alignment = Alignment.CenterHorizontally),
-                                contentAlignment = Alignment.Center
                             ) {
-                                if (selectedCategory.value.isEmpty()) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = "Select Category",
-                                            color = Gray300,
-                                            fontSize = 16.sp,
-                                            fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                        )
-                                        Image(
-                                            painter = painterResource(id = R.drawable.dropdown),
-                                            contentDescription = "Dropdown",
-                                            modifier = Modifier
-                                                .height(12.dp)
-                                                .clickable {
-                                                    expanded = !expanded
-                                                }
-                                        )
-                                    }
-                                    innerTextField()
-                                } else {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxSize(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        innerTextField()
-                                        Image(
-                                            painter = painterResource(id = R.drawable.dropdown),
-                                            contentDescription = "Dropdown",
-                                            modifier = Modifier
-                                                .width(24.dp)
-                                                .clickable {
-                                                    expanded = !expanded
-                                                }
-                                        )
-                                    }
+                                if (communityName.value.isEmpty()) {
+                                    Text(
+                                        text = "Community's Name",
+                                        color = Gray300,
+                                        fontSize = 16.sp,
+                                        fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                    )
                                 }
+                                innerTextField()  //<-- Add this
                             }
                         },
                         textStyle = TextStyle(
@@ -387,6 +300,105 @@ fun CreateCommunity() {
                             fontSize = 16.sp
                         )
                     )
+                }
+                Column {
+                    Text(
+                        text = "Category",
+                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                        fontSize = 24.sp,
+                        color = SoftBlack,
+                        modifier = Modifier
+                            .padding(0.dp, 15.dp, 0.dp, 10.dp)
+                    )
+                    Surface(
+                        border = BorderStroke(
+                            width = 0.5.dp,
+                            color = Gray300
+                        ),
+                        shape = RoundedCornerShape(25.dp),
+                        shadowElevation = 4.dp
+                    ) {
+                        BasicTextField(
+                            value = selectedCategory.value,
+                            onValueChange = {
+                                selectedCategory.value = it
+                            },
+                            enabled = false,
+                            singleLine = true,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .border(
+                                    BorderStroke(
+                                        width = 0.7.dp,
+                                        color = Gray300
+                                    ),
+                                    shape = RoundedCornerShape(25.dp)
+                                ),
+                            decorationBox = { innerTextField ->
+                                TextFieldDefaults.textFieldColors(
+                                    backgroundColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent,
+                                    textColor = SoftBlack
+                                )
+                                Box(
+                                    modifier = Modifier
+                                        .padding(16.dp, 12.dp)
+                                        .fillMaxWidth()
+                                        .fillMaxHeight()
+                                        .align(alignment = Alignment.CenterHorizontally),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (selectedCategory.value.isEmpty()) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(
+                                                text = "Select Category",
+                                                color = Gray300,
+                                                fontSize = 16.sp,
+                                                fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                            )
+                                            Image(
+                                                painter = painterResource(id = R.drawable.dropdown),
+                                                contentDescription = "Dropdown",
+                                                modifier = Modifier
+                                                    .height(12.dp)
+                                                    .clickable {
+                                                        expanded = !expanded
+                                                    }
+                                            )
+                                        }
+                                        innerTextField()
+                                    } else {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxSize(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            innerTextField()
+                                            Image(
+                                                painter = painterResource(id = R.drawable.dropdown),
+                                                contentDescription = "Dropdown",
+                                                modifier = Modifier
+                                                    .width(24.dp)
+                                                    .clickable {
+                                                        expanded = !expanded
+                                                    }
+                                            )
+                                        }
+                                    }
+                                }
+                            },
+                            textStyle = TextStyle(
+                                fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                                fontSize = 16.sp
+                            )
+                        )
+                    }
                     DropdownMenu(
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
@@ -413,51 +425,60 @@ fun CreateCommunity() {
                     modifier = Modifier
                         .padding(0.dp, 15.dp, 0.dp, 10.dp)
                 )
-                BasicTextField(
-                    value = communityDescription.value,
-                    onValueChange = {
-                        communityDescription.value = it
-                    },
-                    enabled = true,
-                    singleLine = false,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            BorderStroke(
-                                width = 0.7.dp,
-                                color = Gray300
-                            ),
-                            shape = RoundedCornerShape(25.dp)
-                        )
-                        .wrapContentHeight(),
-                    decorationBox = { innerTextField ->
-                        TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            textColor = SoftBlack
-                        )
-                        Box(
-                            modifier = Modifier
-                                .padding(16.dp, 12.dp)
-                        ) {
-                            if (communityDescription.value.isEmpty()) {
-                                Text(
-                                    text = "Description",
-                                    color = Gray300,
-                                    fontSize = 16.sp,
-                                    fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                )
+                Surface(
+                    border = BorderStroke(
+                        width = 0.5.dp,
+                        color = Gray300
+                    ),
+                    shape = RoundedCornerShape(25.dp),
+                    shadowElevation = 4.dp
+                ) {
+                    BasicTextField(
+                        value = communityDescription.value,
+                        onValueChange = {
+                            communityDescription.value = it
+                        },
+                        enabled = true,
+                        singleLine = false,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                BorderStroke(
+                                    width = 0.7.dp,
+                                    color = Gray300
+                                ),
+                                shape = RoundedCornerShape(25.dp)
+                            )
+                            .wrapContentHeight(),
+                        decorationBox = { innerTextField ->
+                            TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                textColor = SoftBlack
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .padding(16.dp, 12.dp)
+                            ) {
+                                if (communityDescription.value.isEmpty()) {
+                                    Text(
+                                        text = "Description",
+                                        color = Gray300,
+                                        fontSize = 16.sp,
+                                        fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                    )
+                                }
+                                innerTextField()  //<-- Add this
                             }
-                            innerTextField()  //<-- Add this
-                        }
-                    },
-                    textStyle = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 16.sp
+                        },
+                        textStyle = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                            fontSize = 16.sp
+                        )
                     )
-                )
+                }
                 Text(
                     text = "Contact Information",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
@@ -466,51 +487,60 @@ fun CreateCommunity() {
                     modifier = Modifier
                         .padding(0.dp, 15.dp, 0.dp, 10.dp)
                 )
-                BasicTextField(
-                    value = contactInformation.value,
-                    onValueChange = {
-                        contactInformation.value = it
-                    },
-                    enabled = true,
-                    singleLine = false,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .border(
-                            BorderStroke(
-                                width = 0.7.dp,
-                                color = Gray300
-                            ),
-                            shape = RoundedCornerShape(25.dp)
-                        )
-                        .wrapContentHeight(),
-                    decorationBox = { innerTextField ->
-                        TextFieldDefaults.textFieldColors(
-                            backgroundColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            unfocusedIndicatorColor = Color.Transparent,
-                            disabledIndicatorColor = Color.Transparent,
-                            textColor = SoftBlack
-                        )
-                        Box(
-                            modifier = Modifier
-                                .padding(16.dp, 12.dp)
-                        ) {
-                            if (contactInformation.value.isEmpty()) {
-                                Text(
-                                    text = "Contact Information",
-                                    color = Gray300,
-                                    fontSize = 16.sp,
-                                    fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                )
+                Surface(
+                    border = BorderStroke(
+                        width = 0.5.dp,
+                        color = Gray300
+                    ),
+                    shape = RoundedCornerShape(25.dp),
+                    shadowElevation = 4.dp
+                ) {
+                    BasicTextField(
+                        value = contactInformation.value,
+                        onValueChange = {
+                            contactInformation.value = it
+                        },
+                        enabled = true,
+                        singleLine = false,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .border(
+                                BorderStroke(
+                                    width = 0.7.dp,
+                                    color = Gray300
+                                ),
+                                shape = RoundedCornerShape(25.dp)
+                            )
+                            .wrapContentHeight(),
+                        decorationBox = { innerTextField ->
+                            TextFieldDefaults.textFieldColors(
+                                backgroundColor = Color.Transparent,
+                                focusedIndicatorColor = Color.Transparent,
+                                unfocusedIndicatorColor = Color.Transparent,
+                                disabledIndicatorColor = Color.Transparent,
+                                textColor = SoftBlack
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .padding(16.dp, 12.dp)
+                            ) {
+                                if (contactInformation.value.isEmpty()) {
+                                    Text(
+                                        text = "Contact Information",
+                                        color = Gray300,
+                                        fontSize = 16.sp,
+                                        fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                    )
+                                }
+                                innerTextField()  //<-- Add this
                             }
-                            innerTextField()  //<-- Add this
-                        }
-                    },
-                    textStyle = TextStyle(
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 16.sp
+                        },
+                        textStyle = TextStyle(
+                            fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                            fontSize = 16.sp
+                        )
                     )
-                )
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
