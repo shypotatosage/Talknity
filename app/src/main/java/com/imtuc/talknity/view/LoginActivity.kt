@@ -45,7 +45,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CreatePost()
+                    Login()
                 }
             }
         }
