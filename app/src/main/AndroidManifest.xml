@@ -13,9 +13,9 @@
         android:theme="@style/Theme.Talknity"
         tools:targetApi="31">
         <activity
-            android:name=".view.CommunityCategoriesActivity"
+            android:name=".view.EditProfileActivity"
             android:exported="true"
-            android:label="@string/title_activity_community_categories"
+            android:label="@string/title_activity_edit_profile"
             android:theme="@style/Theme.Talknity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,8 +28,17 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.IndividualPostActivity"
-            android:exported="false"
+            android:name=".view.CommunityCategoriesActivity"
+            android:exported="true"
+            android:label="@string/title_activity_community_categories"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.IndividualDiscussionActivity"
+            android:exported="true"
             android:label="@string/title_activity_individual_post"
             android:theme="@style/Theme.Talknity">
             <meta-data
@@ -46,8 +55,8 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".view.CreatePostActivity"
-            android:exported="false"
+            android:name=".view.CreateDiscussionActivity"
+            android:exported="true"
             android:label="@string/title_activity_create_post"
             android:theme="@style/Theme.Talknity">
             <meta-data
@@ -81,7 +90,6 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
         </activity>
         <activity
             android:name=".view.ProfileActivity"

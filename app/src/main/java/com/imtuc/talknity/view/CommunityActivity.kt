@@ -55,11 +55,6 @@ fun EnterCommunity() {
             painter = painterResource(id = R.drawable.bg1),
             contentScale = ContentScale.Crop
         )
-        .fillMaxSize()) {
-
-    }
-
-    Column(modifier = Modifier
         .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -167,9 +162,9 @@ fun EnterCommunity() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun DefaultPreview3() {
+fun CommunityPreview() {
     TalknityTheme {
         EnterCommunity()
     }
