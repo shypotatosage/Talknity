@@ -40,7 +40,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.view.ui.theme.*
 
-class CreatePostActivity : ComponentActivity() {
+class CreateDiscussionActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -137,7 +137,7 @@ fun CreateDiscussion() {
                     color = SoftBlack
                 )
                 Text(
-                    text = "Post",
+                    text = "Discussion",
                     fontFamily = FontFamily(Font(com.imtuc.talknity.R.font.robotoslab_bold)),
                     fontSize = 30.sp,
                     color = Orange500
@@ -161,7 +161,7 @@ fun CreateDiscussion() {
                             .align(alignment = Alignment.CenterVertically)
                             .border(
                                 width = 0.6.dp,
-                                color = Gray300,
+                                color = GrayBorder,
                                 shape = RoundedCornerShape(16.dp)
                             ),
                         shape = RoundedCornerShape(16.dp),
@@ -210,7 +210,7 @@ fun CreateDiscussion() {
                             .align(alignment = Alignment.CenterVertically)
                             .border(
                                 width = 0.6.dp,
-                                color = Gray300,
+                                color = GrayBorder,
                                 shape = RoundedCornerShape(16.dp)
                             ),
                         shape = RoundedCornerShape(16.dp),
@@ -241,7 +241,7 @@ fun CreateDiscussion() {
                 Surface(
                     border = BorderStroke(
                         width = 0.5.dp,
-                        color = Gray300
+                        color = GrayBorder
                     ),
                     shape = RoundedCornerShape(25.dp),
                     shadowElevation = 4.dp
@@ -258,7 +258,7 @@ fun CreateDiscussion() {
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
-                                    color = Gray300
+                                    color = GrayBorder
                                 ),
                                 shape = RoundedCornerShape(25.dp)
                             )
@@ -303,7 +303,7 @@ fun CreateDiscussion() {
                 Surface(
                     border = BorderStroke(
                         width = 0.5.dp,
-                        color = Gray300
+                        color = GrayBorder
                     ),
                     shape = RoundedCornerShape(25.dp),
                     shadowElevation = 4.dp
@@ -320,7 +320,7 @@ fun CreateDiscussion() {
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
-                                    color = Gray300
+                                    color = GrayBorder
                                 ),
                                 shape = RoundedCornerShape(25.dp)
                             )
@@ -409,7 +409,7 @@ fun CreateDiscussion() {
                             shape = RoundedCornerShape(50.dp),
                             colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)) {
                             Text(
-                                text = "Create Post",
+                                text = "Post Discussion",
                                 fontSize = 20.sp,
                                 fontFamily = FontFamily(Font(com.imtuc.talknity.R.font.opensans_bold)),
                                 color = GreyishWhite
@@ -422,7 +422,7 @@ fun CreateDiscussion() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun CreatePostPreview() {
     TalknityTheme {

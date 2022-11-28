@@ -184,7 +184,7 @@ fun CreateCommunity() {
                             .size(160.dp, 160.dp)
                             .background(color = Color.White)
                             .align(alignment = Alignment.CenterVertically)
-                            .border(width = 0.6.dp, color = Gray300, shape = RoundedCornerShape(16.dp)),
+                            .border(width = 0.6.dp, color = GrayBorder, shape = RoundedCornerShape(16.dp)),
                         shape = RoundedCornerShape(16.dp),
                         color = Color.White,
                         shadowElevation = 5.dp
@@ -227,8 +227,7 @@ fun CreateCommunity() {
                         modifier = Modifier
                             .size(160.dp, 160.dp)
                             .background(color = GreyishWhite)
-                            .align(alignment = Alignment.CenterVertically)
-                            .border(width = 0.6.dp, color = Gray300, shape = RoundedCornerShape(16.dp)),
+                            .align(alignment = Alignment.CenterVertically),
                         shape = RoundedCornerShape(16.dp),
                         color = GreyishWhite
                     ) {
@@ -257,7 +256,7 @@ fun CreateCommunity() {
                 Surface(
                     border = BorderStroke(
                         width = 0.5.dp,
-                        color = Gray300
+                        color = GrayBorder
                     ),
                     shape = RoundedCornerShape(25.dp),
                     shadowElevation = 4.dp
@@ -313,7 +312,7 @@ fun CreateCommunity() {
                     Surface(
                         border = BorderStroke(
                             width = 0.5.dp,
-                            color = Gray300
+                            color = GrayBorder
                         ),
                         shape = RoundedCornerShape(25.dp),
                         shadowElevation = 4.dp
@@ -330,7 +329,7 @@ fun CreateCommunity() {
                                 .border(
                                     BorderStroke(
                                         width = 0.7.dp,
-                                        color = Gray300
+                                        color = GrayBorder
                                     ),
                                     shape = RoundedCornerShape(25.dp)
                                 ),
@@ -428,7 +427,7 @@ fun CreateCommunity() {
                 Surface(
                     border = BorderStroke(
                         width = 0.5.dp,
-                        color = Gray300
+                        color = GrayBorder
                     ),
                     shape = RoundedCornerShape(25.dp),
                     shadowElevation = 4.dp
@@ -445,7 +444,7 @@ fun CreateCommunity() {
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
-                                    color = Gray300
+                                    color = GrayBorder
                                 ),
                                 shape = RoundedCornerShape(25.dp)
                             )
@@ -490,7 +489,7 @@ fun CreateCommunity() {
                 Surface(
                     border = BorderStroke(
                         width = 0.5.dp,
-                        color = Gray300
+                        color = GrayBorder
                     ),
                     shape = RoundedCornerShape(25.dp),
                     shadowElevation = 4.dp
@@ -507,7 +506,7 @@ fun CreateCommunity() {
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
-                                    color = Gray300
+                                    color = GrayBorder
                                 ),
                                 shape = RoundedCornerShape(25.dp)
                             )
@@ -576,7 +575,7 @@ fun CreateCommunity() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun CreateCommunityPreview() {
     TalknityTheme {

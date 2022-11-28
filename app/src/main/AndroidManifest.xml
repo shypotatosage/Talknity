@@ -13,6 +13,33 @@
         android:theme="@style/Theme.Talknity"
         tools:targetApi="31">
         <activity
+            android:name=".DiscussionsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_discussions"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.SelectedCategoryCommunityListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_selected_category_community_list"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.EditProfileActivity"
+            android:exported="true"
+            android:label="@string/title_activity_edit_profile"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.CommunityCategoriesActivity"
             android:exported="false"
             android:label="@string/title_activity_community_categories"
@@ -36,8 +63,17 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.IndividualPostActivity"
-            android:exported="false"
+            android:name=".view.CommunityCategoriesActivity"
+            android:exported="true"
+            android:label="@string/title_activity_community_categories"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.IndividualDiscussionActivity"
+            android:exported="true"
             android:label="@string/title_activity_individual_post"
             android:theme="@style/Theme.Talknity">
             <meta-data
@@ -48,6 +84,15 @@
             android:name=".view.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.CreateDiscussionActivity"
+            android:exported="true"
+            android:label="@string/title_create_discussion"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
@@ -98,7 +143,6 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
         </activity>
         <activity
             android:name=".view.ProfileActivity"

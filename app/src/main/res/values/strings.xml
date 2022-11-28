@@ -9,4 +9,9 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_community_categories">CommunityCategoriesActivity</string>
+    <string name="title_activity_edit_profile">EditProfileActivity</string>
+    <string name="title_activity_selected_category_community_list">
+        SelectedCategoryCommunityListActivity
+    </string>
+    <string name="title_activity_discussions">DiscussionsActivity</string>
 </resources>
