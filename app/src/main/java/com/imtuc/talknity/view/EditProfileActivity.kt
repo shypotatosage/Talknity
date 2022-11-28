@@ -1,5 +1,6 @@
 package com.imtuc.talknity.view
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,9 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -106,14 +109,14 @@ fun EditProfile() {
                 .navigationBarsWithImePadding()
                 .verticalScroll(rememberScrollState())
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.dummypict),
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .height(210.dp)
-                    .fillMaxWidth(),
-                contentScale = ContentScale.Crop
-            )
+                Image(
+                    painter = painterResource(id = R.drawable.dummypict),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .height(210.dp)
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
 //            Row(
 //                modifier = Modifier
 //                    .padding(0.dp, 28.dp, 0.dp, 28.dp)

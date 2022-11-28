@@ -13,6 +13,24 @@
         android:theme="@style/Theme.Talknity"
         tools:targetApi="31">
         <activity
+            android:name=".DiscussionsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_discussions"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.SelectedCategoryCommunityListActivity"
+            android:exported="false"
+            android:label="@string/title_activity_selected_category_community_list"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".view.EditProfileActivity"
             android:exported="true"
             android:label="@string/title_activity_edit_profile"

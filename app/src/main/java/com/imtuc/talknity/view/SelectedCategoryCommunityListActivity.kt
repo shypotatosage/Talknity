@@ -5,9 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.TextFieldDefaults
@@ -19,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -33,13 +30,9 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.components.CommunityCategoryCard
-import com.imtuc.talknity.model.CommunityCategory
-import com.imtuc.talknity.view.ui.theme.Gray300
-import com.imtuc.talknity.view.ui.theme.GrayBorder
-import com.imtuc.talknity.view.ui.theme.SoftBlack
-import com.imtuc.talknity.view.ui.theme.TalknityTheme
+import com.imtuc.talknity.view.ui.theme.*
 
-class CommunityCategoriesActivity : ComponentActivity() {
+class SelectedCategoryCommunityListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -49,16 +42,15 @@ class CommunityCategoriesActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CommunityCategories()
+                    SelectedCategoryCommunityList()
                 }
             }
         }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CommunityCategories() {
+fun SelectedCategoryCommunityList() {
     var search = remember {
         mutableStateOf("")
     }
@@ -149,22 +141,37 @@ fun CommunityCategories() {
                     )
                 }
             }
-            LazyVerticalGrid(
-                cells = GridCells.Fixed(2),
-                content = {
-                    items(4) {
-                        CommunityCategoryCard()
-                    }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row() {
+                    Text(
+                        text = "Art",
+                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                        fontSize = 28.sp,
+                        color = Orange500
+                    )
+                    Text(
+                        text = " Section",
+                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                        fontSize = 28.sp,
+                        color = SoftBlack
+                    )
                 }
-            )
+            }
+            LazyColumn() {
+
+            }
         }
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
-fun CommunityCategoriesPreview() {
+fun SelectedCategoryCommunityListPreview() {
     TalknityTheme {
-        CommunityCategories()
+        SelectedCategoryCommunityList()
     }
 }
