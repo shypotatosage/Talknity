@@ -104,7 +104,7 @@ fun HomeScreen() {
                     color = SoftBlack
                 )
                 Text(
-                    text = " Posts",
+                    text = " Discussions",
                     fontFamily = FontFamily(Font(R.font.opensans_bold)),
                     fontSize = 25.sp,
                     color = Orange500
