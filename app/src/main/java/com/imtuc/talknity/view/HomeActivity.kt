@@ -37,6 +37,8 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.components.CommunityCategoryCard
+import com.imtuc.talknity.components.DiscussionCard
+import com.imtuc.talknity.components.DiscussionCard2
 import com.imtuc.talknity.components.IndividualCommunity
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
@@ -68,13 +70,14 @@ fun HomeScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
+//                .verticalScroll(rememberScrollState())
                 .navigationBarsWithImePadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
             Row(
                 modifier = Modifier
-                    .padding(20.dp,25.dp,0.dp,0.dp)
+                    .padding(20.dp,10.dp,0.dp,0.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
@@ -93,52 +96,54 @@ fun HomeScreen() {
             }
             Row(
                 modifier = Modifier
-                    .padding(20.dp, 13.dp, 0.dp, 8.dp)
+                    .padding(20.dp, 5.dp, 0.dp, 0.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = "Top",
                     fontFamily = FontFamily(Font(R.font.opensans_bold)),
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     color = SoftBlack
                 )
                 Text(
                     text = " Discussions",
                     fontFamily = FontFamily(Font(R.font.opensans_bold)),
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     color = Orange500
                 )
             }
             LazyRow(
                 modifier = Modifier
-                    .padding(20.dp, 13.dp, 0.dp, 13.dp),
+                    .padding(20.dp, 5.dp, 0.dp, 5.dp),
                 content = {
                     items(10) {
-                        CommunityCategoryCard()
+                        DiscussionCard2()
                     }
                 }
             )
             Row(
                 modifier = Modifier
-                    .padding(20.dp, 13.dp, 0.dp, 8.dp)
+                    .padding(20.dp, 5.dp, 0.dp, 0.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Start
             ) {
                 Text(
                     text = "Top",
                     fontFamily = FontFamily(Font(R.font.opensans_bold)),
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     color = SoftBlack
                 )
                 Text(
                     text = " Community",
                     fontFamily = FontFamily(Font(R.font.opensans_bold)),
-                    fontSize = 25.sp,
+                    fontSize = 20.sp,
                     color = Orange500
                 )
             }
             LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 content = {

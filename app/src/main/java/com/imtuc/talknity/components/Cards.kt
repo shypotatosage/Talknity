@@ -224,6 +224,170 @@ fun DiscussionCard() {
         }
     }
 }
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun DiscussionCard2() {
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        shadowElevation = 6.dp,
+        modifier = Modifier
+            .wrapContentSize(align = Alignment.Center)
+            .padding(5.dp, 8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(16.dp, 24.dp)
+                .width(300.dp)
+        ) {
+            Row() {
+                Surface(
+                    modifier = Modifier
+                        .wrapContentSize(),
+                    shape = RoundedCornerShape(100.dp),
+                    shadowElevation = 6.dp
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.dummypict),
+                        contentDescription = "Discussion Maker Profile",
+                        modifier = Modifier
+                            .height(60.dp)
+                            .width(60.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp, 0.dp, 0.dp, 0.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = "Jennie Swift",
+                        fontSize = 16.sp,
+                        fontFamily = FontFamily(Font(R.font.opensans_bold)),
+                        modifier = Modifier,
+                        color = Orange500
+                    )
+                    Text(
+                        text = "I Just Lost My Cat",
+                        fontSize = 22.sp,
+                        fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+                        modifier = Modifier,
+                        color = SoftBlack
+                    )
+                }
+            }
+            Surface(
+                modifier = Modifier
+                    .padding(0.dp, 20.dp),
+                shape = RoundedCornerShape(25.dp),
+                shadowElevation = 6.dp
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.dummypict),
+                    contentDescription = "Discussion Picture",
+                    modifier = Modifier
+                        .height(150.dp)
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Text(
+                text = "Lorem ipsum dolor sit amet, consectetur adipiscing" +
+                        " elit, sed do eiusmod tempor incididunt ut " +
+                        "labore et dolore magna aliqua.....",
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp, 0.dp, 0.dp, 12.dp)
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(
+                    modifier = Modifier
+                        .wrapContentWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .wrapContentWidth()
+                    ) {
+                        Surface(
+                            modifier = Modifier
+                                .wrapContentSize(),
+                            shape = RoundedCornerShape(100.dp),
+                            shadowElevation = 6.dp
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.dummypict),
+                                contentDescription = "Commentator 1 Profile",
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(36.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Surface(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(start = 20.dp),
+                            shape = RoundedCornerShape(100.dp),
+                            shadowElevation = 6.dp
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.dummypict),
+                                contentDescription = "Commentator 2 Profile",
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(36.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                        Surface(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(start = 40.dp),
+                            shape = RoundedCornerShape(100.dp),
+                            shadowElevation = 6.dp
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.dummypict),
+                                contentDescription = "Commentator 3 Profile",
+                                modifier = Modifier
+                                    .height(36.dp)
+                                    .width(36.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                    Text(
+                        text = "20+ Comments",
+                        fontSize = 14.sp,
+                        fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                        modifier = Modifier
+                            .padding(start = 8.dp),
+                        color = Orange500
+                    )
+                }
+                Button(onClick = { /*TODO*/ },
+                    modifier = Modifier,
+                    shape = RoundedCornerShape(50.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)) {
+                    Text(
+                        text = "View",
+                        fontSize = 18.sp,
+                        fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                        color = GreyishWhite
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun CommentCard() {
@@ -278,7 +442,7 @@ fun CommentCard() {
         }
     }
 }
-
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun IndividualCommunity() {
     Surface(
@@ -286,12 +450,14 @@ fun IndividualCommunity() {
         shadowElevation = 8.dp,
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
+            .width(350.dp)
             .padding(0.dp, 13.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .height(150.dp)
+                .height(110.dp)
+                .width(500.dp)
                 .padding(10.dp, 13.dp),
             verticalAlignment = Alignment.Top,
             horizontalArrangement = Arrangement.Start
@@ -306,7 +472,7 @@ fun IndividualCommunity() {
                     painter = painterResource(id = R.drawable.ownedcommunity),
                     contentDescription = "Back",
                     modifier = Modifier
-                        .size(70.dp)
+                        .size(45.dp)
                 )
             }
             Column(
@@ -325,7 +491,7 @@ fun IndividualCommunity() {
                     Text(
                         text = "BasCom",
                         textAlign = TextAlign.Start,
-                        fontSize = 20.sp,
+                        fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                     )
                     Image(
@@ -338,7 +504,7 @@ fun IndividualCommunity() {
                     Text(
                         text = "50 Members",
                         textAlign = TextAlign.Start,
-                        fontSize = 13.sp,
+                        fontSize = 12.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                     )
                 }
@@ -348,7 +514,7 @@ fun IndividualCommunity() {
                         .padding(0.dp, 5.dp)
                         .fillMaxHeight(),
                     textAlign = TextAlign.Start,
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
                     fontFamily = FontFamily(Font(R.font.opensans_semibold)),
                 )
             }

@@ -13,7 +13,7 @@
         android:theme="@style/Theme.Talknity"
         tools:targetApi="31">
         <activity
-            android:name=".DiscussionsActivity"
+            android:name=".view.DiscussionsActivity"
             android:exported="false"
             android:label="@string/title_activity_discussions"
             android:theme="@style/Theme.Talknity">
@@ -63,15 +63,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".view.CommunityCategoriesActivity"
-            android:exported="true"
-            android:label="@string/title_activity_community_categories"
-            android:theme="@style/Theme.Talknity">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".view.IndividualDiscussionActivity"
             android:exported="true"
             android:label="@string/title_activity_individual_post"
@@ -92,7 +83,7 @@
         <activity
             android:name=".view.CreateDiscussionActivity"
             android:exported="true"
-            android:label="@string/title_create_discussion"
+            android:label="@string/title_activity_create_discussion"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
@@ -107,15 +98,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".view.CreatePostActivity"
-            android:exported="false"
-            android:label="@string/title_activity_create_post"
-            android:theme="@style/Theme.Talknity">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
         <activity
             android:name=".view.CommunityActivity"
             android:exported="false"
