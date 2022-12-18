@@ -1,8 +1,10 @@
 package com.imtuc.talknity.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.Surface
@@ -11,8 +13,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
@@ -21,10 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imtuc.talknity.R
 import com.imtuc.talknity.model.CommunityCategory
-import com.imtuc.talknity.view.ui.theme.Gray300
-import com.imtuc.talknity.view.ui.theme.GreyishWhite
-import com.imtuc.talknity.view.ui.theme.Orange500
-import com.imtuc.talknity.view.ui.theme.SoftBlack
+import com.imtuc.talknity.view.ui.theme.*
 
 @Composable
 fun CommunityCategoryCard() {
@@ -60,7 +62,7 @@ fun CommunityCategoryCard() {
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DiscussionCard() {
     Surface(
@@ -224,7 +226,7 @@ fun DiscussionCard() {
         }
     }
 }
-@Preview(showBackground = true, showSystemUi = true)
+//@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DiscussionCard2() {
     Surface(
@@ -499,7 +501,7 @@ fun IndividualCommunity() {
                         contentDescription = "Back",
                         modifier = Modifier
                             .size(30.dp)
-                            .padding(5.dp,0.dp)
+                            .padding(5.dp, 0.dp)
                     )
                     Text(
                         text = "50 Members",
@@ -520,4 +522,112 @@ fun IndividualCommunity() {
             }
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun CommunityMember() {
+    Surface(
+        modifier = Modifier
+            .wrapContentSize(align = Alignment.Center)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Surface(
+                modifier = Modifier
+
+                    .padding(0.dp, 10.dp, 0.dp, 3.dp)
+                    .wrapContentSize(),
+
+                shape = RoundedCornerShape(20.dp),
+                shadowElevation = 6.dp,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.dummypict),
+                    contentDescription = "Discussion Maker Profile",
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(60.dp),
+                    contentScale = ContentScale.Crop
+                )
+
+
+            }
+            Text(
+                text = "John",
+                textAlign = TextAlign.Start,
+                fontSize = 15.sp,
+                fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+            )
+            Text(
+                text = "Leader",
+                textAlign = TextAlign.Start,
+                fontSize = 10.sp,
+                fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+            )
+            ClickableText(text = AnnotatedString( text="Delete", SpanStyle(
+                    color = Color.Red,
+                fontSize = 10.sp,
+                fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+            )),
+                onClick = {
+
+                }
+
+            )
+
+        }
+    }
+
+}
+
+fun ClickableText(text: AnnotatedString) {
+
+}
+
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun CommunityLeader() {
+    Surface(
+        modifier = Modifier
+            .wrapContentSize(align = Alignment.Center)
+    ){
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Surface(
+                modifier = Modifier
+
+                    .padding(0.dp,10.dp, 0.dp,3.dp)
+                    .wrapContentSize(),
+
+                shape = RoundedCornerShape(20.dp),
+                shadowElevation = 6.dp,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.dummypict),
+                    contentDescription = "Discussion Maker Profile",
+                    modifier = Modifier
+                        .height(60.dp)
+                        .width(60.dp),
+                    contentScale = ContentScale.Crop
+                )
+            }
+            Text(
+                text = "John",
+                textAlign = TextAlign.Start,
+                fontSize = 15.sp,
+                fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+            )
+            Text(
+                text = "Leader",
+                textAlign = TextAlign.Start,
+                fontSize = 10.sp,
+                fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
+            )
+        }
+    }
+
 }

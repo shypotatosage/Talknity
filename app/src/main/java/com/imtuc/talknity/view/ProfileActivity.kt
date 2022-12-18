@@ -237,35 +237,71 @@ fun Profile() {
                     )
                 }
             }
-            Surface(
-                shape = RoundedCornerShape(25.dp),
-                shadowElevation = 8.dp,
+            Row(
                 modifier = Modifier
-                    .wrapContentSize(align = Alignment.Center)
-                    .padding(0.dp, 32.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Surface(
+                    shape = RoundedCornerShape(25.dp),
+                    shadowElevation = 8.dp,
                     modifier = Modifier
-                        .padding(15.dp, 15.dp),
-                    verticalArrangement = Arrangement.Center
+                        .wrapContentSize(align = Alignment.Center)
+                        .padding(0.dp, 32.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ownedcommunity),
-                        contentDescription = "Back",
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .padding(0.dp, 0.dp, 0.dp, 10.dp)
-                            .height(40.dp)
-                    )
-                    Text(
-                        text = "Your Discussions",
-                        textAlign = TextAlign.Center,
-                        fontSize = 20.sp,
-                        color = Orange500,
-                        fontFamily = FontFamily(Font(R.font.opensans_semibold)),
-                    )
+                            .padding(15.dp, 15.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.discussionicon),
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                                .height(40.dp)
+                        )
+                        Text(
+                            text = "Discussions",
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            color = Orange500,
+                            fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                        )
+                    }
+                }
+                Surface(
+                    shape = RoundedCornerShape(25.dp),
+                    shadowElevation = 8.dp,
+                    modifier = Modifier
+                        .wrapContentSize(align = Alignment.Center)
+                        .padding(0.dp, 32.dp)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(15.dp, 15.dp),
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ownedcommunity),
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                                .height(40.dp)
+                        )
+                        Text(
+                            text = "Community",
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp,
+                            color = Orange500,
+                            fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                        )
+                    }
                 }
             }
+
         }
     }
 }

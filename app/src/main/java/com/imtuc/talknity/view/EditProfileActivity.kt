@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -110,11 +111,14 @@ fun EditProfile() {
                 .verticalScroll(rememberScrollState())
         ) {
                 Image(
+
                     painter = painterResource(id = R.drawable.dummypict),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .height(210.dp)
+//                        .clip(RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
                         .fillMaxWidth(),
+
                     contentScale = ContentScale.Crop
                 )
 //            Row(
@@ -389,7 +393,8 @@ fun EditProfile() {
                         )
                     )
                 }
-                Row(horizontalArrangement = Arrangement.Center,
+                Row(
+                    horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(0.dp, 32.dp, 0.dp, 128.dp)) {

@@ -17,7 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -30,6 +32,7 @@ import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.components.CommunityCategoryCard
+import com.imtuc.talknity.components.IndividualCommunity
 import com.imtuc.talknity.view.ui.theme.*
 
 class SelectedCategoryCommunityListActivity : ComponentActivity() {
@@ -161,9 +164,32 @@ fun SelectedCategoryCommunityList() {
                     )
                 }
             }
-            LazyColumn() {
+            Surface(
+                modifier = Modifier
+                    .wrapContentSize(align = Alignment.Center)
+                    .fillMaxSize(),
+             ) {
+                Image(
 
+                    painter = painterResource(id = R.drawable.community1pageimage),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    content = {
+                        items(10) {
+                            IndividualCommunity()
+                        }
+                    }
+                )
             }
+
         }
     }
 }
