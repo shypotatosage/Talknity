@@ -4,6 +4,7 @@
     <string name="title_activity_community">CommunityActivity</string>
     <string name="title_activity_create_discussion">CreateDiscussionActivity</string>
     <string name="title_activity_individual_post">IndividualPostActivity</string>
+    <string name="title_activity_individual_discussion">IndividualDiscussionActivity</string>
     <string name="title_activity_login">LoginActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
     <string name="title_activity_splash">SplashActivity</string>

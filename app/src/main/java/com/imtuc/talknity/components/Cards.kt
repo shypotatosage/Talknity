@@ -62,7 +62,6 @@ fun CommunityCategoryCard() {
     }
 }
 
-//@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun DiscussionCard() {
     Surface(

@@ -107,7 +107,7 @@ fun CreateCommunity() {
         imageUri = uri
     }
 
-    var categoryList = arrayListOf<CommunityCategory>(CommunityCategory("1", "All Categories"), CommunityCategory("2", "Art"))
+    var categoryList = arrayListOf<CommunityCategory>(CommunityCategory("1", "All Categories", "a", "a"), CommunityCategory("2", "Art", "a", "a"))
 
 
     imageUri?.let {
@@ -408,10 +408,10 @@ fun CreateCommunity() {
                     ) {
                         categoryList.forEach { category ->
                             DropdownMenuItem(onClick = {
-                                selectedCategory.value = category.name.toString()
+                                selectedCategory.value = category.category_name.toString()
                                 expanded = false
                             }) {
-                                Text(text = category.name, modifier = Modifier.fillMaxWidth())
+                                Text(text = category.category_name, modifier = Modifier.fillMaxWidth())
                             }
                         }
                     }

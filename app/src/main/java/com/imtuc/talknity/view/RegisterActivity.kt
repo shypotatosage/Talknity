@@ -32,15 +32,25 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.view.ui.theme.*
+import com.imtuc.talknity.viewmodel.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterActivity : ComponentActivity() {
+
+    private lateinit var authViewModel: AuthViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+
         setContent {
             TalknityTheme {
                 // A surface container using the 'background' color from the theme
@@ -48,7 +58,7 @@ class RegisterActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Register()
+                    Register(authViewModel)
                 }
             }
         }
@@ -57,7 +67,7 @@ class RegisterActivity : ComponentActivity() {
 }
 
 @Composable
-fun Register() {
+fun Register(authViewModel: AuthViewModel) {
     val context = LocalContext.current
 
     var email = remember {
@@ -304,6 +314,8 @@ fun Register() {
             ) {
                 Button(
                     onClick = {
+                        authViewModel.registerUser(username.value, email.value, passwordValue.value)
+
                         context.startActivity(Intent(context, LoginActivity::class.java))
                     },
                     modifier = Modifier
@@ -350,14 +362,5 @@ fun Register() {
                 }
             }
         }
-    }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun RegisterPreview() {
-    TalknityTheme {
-        Register()
     }
 }

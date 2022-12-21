@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
+        android:name=".Application"
         android:allowBackup="true"
+        android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
@@ -14,7 +19,7 @@
         tools:targetApi="31">
         <activity
             android:name=".view.DiscussionsActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_discussions"
             android:theme="@style/Theme.Talknity">
             <meta-data
@@ -32,17 +37,13 @@
         </activity>
         <activity
             android:name=".view.EditProfileActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/title_activity_edit_profile"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".view.CommunityCategoriesActivity"
@@ -61,12 +62,11 @@
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
         </activity>
         <activity
             android:name=".view.IndividualDiscussionActivity"
             android:exported="true"
-            android:label="@string/title_activity_individual_post"
+            android:label="@string/title_activity_individual_discussion"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
@@ -74,6 +74,7 @@
         </activity>
         <activity
             android:name=".view.LoginActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/title_activity_login"
             android:theme="@style/Theme.Talknity">
@@ -83,6 +84,7 @@
         </activity>
         <activity
             android:name=".view.CreateDiscussionActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/title_activity_create_discussion"
             android:theme="@style/Theme.Talknity">
@@ -92,14 +94,19 @@
         </activity>
         <activity
             android:name=".view.RegisterActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/title_activity_register"
             android:theme="@style/Theme.Talknity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".view.CommunityActivity"
             android:exported="false"

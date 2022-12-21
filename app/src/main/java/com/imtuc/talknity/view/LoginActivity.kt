@@ -1,8 +1,11 @@
 package com.imtuc.talknity.view
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.text.style.UnderlineSpan
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -49,10 +52,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.lifecycle.ViewModelProvider
+import com.imtuc.talknity.viewmodel.AuthViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class LoginActivity : ComponentActivity() {
+
+    private lateinit var authViewModel: AuthViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
+
         setContent {
             TalknityTheme {
                 // A surface container using the 'background' color from the theme
@@ -60,7 +73,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Login()
+                    Login(authViewModel)
                 }
             }
         }
@@ -69,7 +82,7 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun Login() {
+fun Login(authViewModel: AuthViewModel) {
     val context = LocalContext.current
 
     var loginUserOrEmail = remember {
@@ -98,6 +111,17 @@ fun Login() {
         Icons.Filled.Visibility
     } else {
         Icons.Filled.VisibilityOff
+    }
+
+    LaunchedEffect(key1 =  authViewModel.login.value){
+        Log.d(ContentValues.TAG, "Login Message: ${authViewModel.login.value}")
+        if(authViewModel.login.value != null){
+            if (authViewModel.login.value == "Login Successful") {
+                context.startActivity(Intent(context, HomeActivity::class.java))
+            } else {
+                Toast.makeText(context, authViewModel.login.value, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
@@ -261,7 +285,9 @@ fun Login() {
                     .padding()
             ) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        authViewModel.loginUser(loginUserOrEmail.value, passwordValue.value, context)
+                    },
                     modifier = Modifier
                         .padding(8.dp, 0.dp),
                     shape = RoundedCornerShape(50.dp),
@@ -312,21 +338,15 @@ fun Login() {
 fun countChar(text: String): String {
     var count = 0
     var result = ""
+
     for (Char in text) {
         count++
     }
+
     while (count > 0) {
         result += "*"
         count--
     }
+
     return result
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LoginPreview() {
-    TalknityTheme {
-        Login()
-    }
 }
