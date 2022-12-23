@@ -23,9 +23,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
@@ -41,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SplashScreen()
+                    SplashScreen1()
                 }
             }
         }
@@ -49,14 +46,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SplashScreen() {
-
-    val context = LocalContext.current
-
+fun SplashScreen1() {
     Column(
         modifier = Modifier
             .paint(
-                painter = painterResource(id = R.drawable.splashscreen),
+                painter = painterResource(id = R.drawable.splash),
                 contentScale = ContentScale.Crop
             )
             .fillMaxSize(),
@@ -100,26 +94,12 @@ fun SplashScreen() {
             )
         }
     }
-    Column(
-        modifier = Modifier
-            .offset(x=70.dp,y=500.dp),
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.puzzlepeople),
-            contentDescription = "Back",
-            modifier = Modifier
-                .padding(100.dp, 50.dp, 0.dp, 0.dp)
-                .size(300.dp)
-        )
-    }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun SplashPreview() {
+fun SplashPreview2() {
     TalknityTheme {
-        SplashScreen()
+        SplashScreen1()
     }
 }
