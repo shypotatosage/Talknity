@@ -25,7 +25,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.imtuc.talknity.R
+import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.GreyishWhite
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
@@ -41,7 +44,7 @@ class CommunityActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    EnterCommunity()
+                    EnterCommunity(navController = rememberNavController())
                 }
             }
         }
@@ -49,7 +52,7 @@ class CommunityActivity : ComponentActivity() {
 }
 
 @Composable
-fun EnterCommunity() {
+fun EnterCommunity(navController: NavController) {
     Column(modifier = Modifier
         .paint(
             painter = painterResource(id = R.drawable.bg1),
@@ -100,7 +103,9 @@ fun EnterCommunity() {
                     .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                 contentPadding = PaddingValues(),
                 shape = RoundedCornerShape(16.dp),
-                onClick = {},
+                onClick = {
+                          navController.navigate(Screen.CommunityCategory.route)
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Orange500),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
             ) {
@@ -166,6 +171,6 @@ fun EnterCommunity() {
 @Composable
 fun CommunityPreview() {
     TalknityTheme {
-        EnterCommunity()
+        EnterCommunity(navController = rememberNavController())
     }
 }

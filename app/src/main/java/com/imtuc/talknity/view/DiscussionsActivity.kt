@@ -57,7 +57,6 @@ class DiscussionsActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Discussions() {
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {

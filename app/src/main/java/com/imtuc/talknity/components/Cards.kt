@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.imtuc.talknity.R
+import com.imtuc.talknity.model.Community
 import com.imtuc.talknity.model.CommunityCategory
 import com.imtuc.talknity.view.ui.theme.*
 
@@ -443,9 +444,9 @@ fun CommentCard() {
         }
     }
 }
-@Preview(showBackground = true, showSystemUi = true)
+
 @Composable
-fun IndividualCommunity() {
+fun IndividualCommunity(community: Community) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         shadowElevation = 8.dp,
@@ -471,7 +472,7 @@ fun IndividualCommunity() {
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ownedcommunity),
-                    contentDescription = "Back",
+                    contentDescription = "Community Logo",
                     modifier = Modifier
                         .size(45.dp)
                 )
@@ -490,14 +491,14 @@ fun IndividualCommunity() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "BasCom",
+                        text = community.community_name,
                         textAlign = TextAlign.Start,
                         fontSize = 18.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                     )
                     Image(
                         painter = painterResource(id = R.drawable.ownedcommunity),
-                        contentDescription = "Back",
+                        contentDescription = "Members Count",
                         modifier = Modifier
                             .size(30.dp)
                             .padding(5.dp, 0.dp)
@@ -510,7 +511,7 @@ fun IndividualCommunity() {
                     )
                 }
                 Text(
-                    text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+                    text =  if (community.community_description.length > 75) { community.community_description.substring(0, 74) } else { community.community_description },
                     modifier = Modifier
                         .padding(0.dp, 5.dp)
                         .fillMaxHeight(),

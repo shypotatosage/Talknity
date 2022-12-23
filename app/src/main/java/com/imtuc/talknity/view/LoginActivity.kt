@@ -52,6 +52,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.imtuc.talknity.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,7 +75,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Login(authViewModel)
+                    Login(authViewModel, this)
                 }
             }
         }
@@ -82,7 +84,7 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun Login(authViewModel: AuthViewModel) {
+fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
     val context = LocalContext.current
 
     var loginUserOrEmail = remember {
@@ -113,16 +115,16 @@ fun Login(authViewModel: AuthViewModel) {
         Icons.Filled.VisibilityOff
     }
 
-    LaunchedEffect(key1 =  authViewModel.login.value){
-        Log.d(ContentValues.TAG, "Login Message: ${authViewModel.login.value}")
-        if(authViewModel.login.value != null){
-            if (authViewModel.login.value == "Login Successful") {
+    authViewModel.login.observe(lifecycleOwner, Observer {
+        response ->
+        if(response != null){
+            if (response == "Login Successful") {
                 context.startActivity(Intent(context, HomeActivity::class.java))
             } else {
-                Toast.makeText(context, authViewModel.login.value, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
             }
         }
-    }
+    })
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
@@ -332,6 +334,13 @@ fun Login(authViewModel: AuthViewModel) {
                 }
             }
         }
+    }
+    
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+
     }
 }
 

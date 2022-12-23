@@ -23,4 +23,10 @@ interface EndPointAPI {
         @Field("user_password") user_password: String,
     ): Response<JsonObject>
 
+    @GET("/get-communitieshome")
+    suspend fun getCommunityHome(): Response<JsonObject>
+
+    @GET("/get-postshome")
+    suspend fun getPostHome(): Response<JsonObject>
+
 }

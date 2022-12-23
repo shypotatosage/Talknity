@@ -6,6 +6,7 @@ data class Post(
     var post_content: String,
     var post_image: String,
     var anonymous: Boolean,
+    var created_at: String,
     var creator: User
 ) {
 

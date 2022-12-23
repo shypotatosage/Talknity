@@ -47,12 +47,13 @@ class AuthViewModel @Inject constructor(
             if (response.isSuccessful) {
                 if (response.body()?.get("message")?.asString == "Login successful") {
                     _login.value = "Login Successful"
-                    val preferences = context.getSharedPreferences("login", Context.MODE_PRIVATE)
+                    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
                     var editor = preferences.edit()
                     editor.putString("user_username", response.body()?.get("user_username")?.asString)
                     editor.putString("user_displayname", response.body()?.get("user_displayname")?.asString)
                     editor.putString("user_email", response.body()?.get("user_email")?.asString)
                     editor.putString("user_image", response.body()?.get("user_image")?.asString)
+                    editor.putString("user_id", response.body()?.get("user_id")?.asString)
                 } else if (response.body()?.get("message")?.asString == "crypto/bcrypt: hashedPassword is not the hash of the given password"){
                     _login.value = "Password Is Incorrect"
                 } else if (response.body()?.get("message")?.asString == "sql: no rows in result set") {
@@ -66,9 +67,6 @@ class AuthViewModel @Inject constructor(
                 Log.e("Login User", response.body()?.get("message")!!.asString)
             }
         }
-    }
-
-    fun saveLogin(context: Context) {
     }
 
 }

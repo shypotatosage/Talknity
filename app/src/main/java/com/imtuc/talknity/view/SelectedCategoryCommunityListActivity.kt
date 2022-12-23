@@ -184,7 +184,7 @@ fun SelectedCategoryCommunityList() {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     content = {
                         items(10) {
-                            IndividualCommunity()
+
                         }
                     }
                 )
