@@ -53,7 +53,10 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.model.CommunityCategory
 import com.imtuc.talknity.view.ui.theme.*
+import com.imtuc.talknity.viewmodel.CommunityViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CreateCommunityActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +67,7 @@ class CreateCommunityActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CreateCommunity()
+//                    CreateCommunity()
                 }
             }
         }
@@ -72,7 +75,7 @@ class CreateCommunityActivity : ComponentActivity() {
 }
 
 @Composable
-fun CreateCommunity() {
+fun CreateCommunity(communityViewModel: CommunityViewModel) {
     var selectedCategory = remember {
         mutableStateOf("")
     }
@@ -106,9 +109,6 @@ fun CreateCommunity() {
     val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
         imageUri = uri
     }
-
-    var categoryList = arrayListOf<CommunityCategory>(CommunityCategory("1", "All Categories", "a", "a"), CommunityCategory("2", "Art", "a", "a"))
-
 
     imageUri?.let {
         if (Build.VERSION.SDK_INT < 28) {
@@ -175,9 +175,6 @@ fun CreateCommunity() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(0.dp, 24.dp, 0.dp, 0.dp)
-                        .clickable {
-                            launcher.launch("image/*")
-                        }
                 ) {
                     Surface(
                         modifier = Modifier
@@ -191,7 +188,10 @@ fun CreateCommunity() {
                     ) {
                         Column(
                             modifier = Modifier
-                                .fillMaxSize(),
+                                .fillMaxSize()
+                                .clickable {
+                                    launcher.launch("image/*")
+                                },
                             verticalArrangement = Arrangement.Center,
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -406,14 +406,14 @@ fun CreateCommunity() {
                             .fillMaxWidth(0.875f)
                             .align(alignment = Alignment.CenterHorizontally)
                     ) {
-                        categoryList.forEach { category ->
-                            DropdownMenuItem(onClick = {
-                                selectedCategory.value = category.category_name.toString()
-                                expanded = false
-                            }) {
-                                Text(text = category.category_name, modifier = Modifier.fillMaxWidth())
-                            }
-                        }
+//                        categoryList.forEach { category ->
+//                            DropdownMenuItem(onClick = {
+//                                selectedCategory.value = category.category_id
+//                                expanded = false
+//                            }) {
+//                                Text(text = category.category_name, modifier = Modifier.fillMaxWidth())
+//                            }
+//                        }
                     }
                 }
                 Text(
@@ -579,6 +579,6 @@ fun CreateCommunity() {
 @Composable
 fun CreateCommunityPreview() {
     TalknityTheme {
-        CreateCommunity()
+//        CreateCommunity()
     }
 }

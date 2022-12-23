@@ -1,16 +1,21 @@
 package com.imtuc.talknity.view
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -20,10 +25,14 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.imtuc.talknity.R
+import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
 import com.imtuc.talknity.view.ui.theme.TalknityTheme
+import kotlinx.coroutines.delay
 
 class SplashScreenActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +44,7 @@ class SplashScreenActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SplashScreen()
+                    SplashScreen(1f)
                 }
             }
         }
@@ -43,16 +52,46 @@ class SplashScreenActivity : ComponentActivity() {
 }
 
 @Composable
-fun SplashScreen() {
+fun AnimatedSplashScreen(navController: NavHostController) {
+    var startAnimation by remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
+    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+
+    val alphaAnimation = animateFloatAsState(
+        targetValue = if (startAnimation) { 1f } else { 0f },
+        animationSpec = tween(
+            durationMillis = 3000
+        )
+    )
+
+    LaunchedEffect(key1 = true) {
+        startAnimation = true
+        delay(4000)
+        if (preferences.getInt("user_id", -1) > 0) {
+            navController.navigate(Screen.Home.route)
+        } else {
+            navController.navigate(Screen.Login.route)
+        }
+    }
+
+    SplashScreen(alphaAnimation.value)
+}
+
+@Composable
+fun SplashScreen(alpha: Float) {
     Column(
         modifier = Modifier
             .paint(
-                painter = painterResource(id = R.drawable.splashscreen),
+                painter = painterResource(id = R.drawable.bg1),
                 contentScale = ContentScale.Crop
             )
-            .fillMaxSize(),
+            .fillMaxSize()
+            .alpha(alpha)
+            .padding(0.dp, 0.dp, 0.dp, 75.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -60,15 +99,14 @@ fun SplashScreen() {
             painter = painterResource(id = R.drawable.talknitylogo),
             contentDescription = "Back",
             modifier = Modifier
-                .height(150.dp)
+                .width(300.dp)
         )
 
         Row(
             modifier = Modifier
                 .padding(0.dp, 20.dp, 0.dp, 0.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .width(300.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Column() {
                 Text(
@@ -103,7 +141,7 @@ fun SplashScreen() {
             painter = painterResource(id = R.drawable.puzzlepeople),
             contentDescription = "Back",
             modifier = Modifier
-                .padding(100.dp, 50.dp, 0.dp, 0.dp)
+                .padding(75.dp, 40.dp, 0.dp, 0.dp)
                 .size(300.dp)
         )
     }
@@ -113,6 +151,6 @@ fun SplashScreen() {
 @Composable
 fun SplashPreview() {
     TalknityTheme {
-        SplashScreen()
+        SplashScreen(1f)
     }
 }

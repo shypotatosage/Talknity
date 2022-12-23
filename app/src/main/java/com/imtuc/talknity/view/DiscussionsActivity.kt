@@ -1,6 +1,8 @@
 package com.imtuc.talknity.view
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
@@ -20,11 +23,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -32,13 +37,17 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.components.CommunityCategoryCard
 import com.imtuc.talknity.components.DiscussionCard
+import com.imtuc.talknity.model.Post
 import com.imtuc.talknity.view.ui.theme.*
+import com.imtuc.talknity.viewmodel.HomeViewModel
 
 class DiscussionsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,7 +59,7 @@ class DiscussionsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Discussions()
+//                    Discussions()
                 }
             }
         }
@@ -58,7 +67,27 @@ class DiscussionsActivity : ComponentActivity() {
 }
 
 @Composable
-fun Discussions() {
+fun Discussions(homeViewModel: HomeViewModel, lifecycleOwner: LifecycleOwner) {
+    val context = LocalContext.current
+
+    var post = remember {
+        mutableStateListOf<Post>()
+    }
+
+    homeViewModel.getHomePosts()
+
+    homeViewModel.posts.observe(lifecycleOwner, Observer {
+            response ->
+        if (homeViewModel.posterror.value == "Get Data Successful") {
+            post.clear()
+            post.addAll(homeViewModel.posts.value!!)
+
+            Log.e("Discussions", post.toString())
+        } else {
+            Toast.makeText(context, homeViewModel.posterror.value, Toast.LENGTH_SHORT).show()
+        }
+    })
+
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
             modifier = Modifier
@@ -76,11 +105,13 @@ fun Discussions() {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 var i = 0
-                items(4) {
+                itemsIndexed(post) { index, item ->
                     if (i == 0) {
-                        tmp()
+                        DiscussionsTop()
                     }
-                    DiscussionCard()
+
+                    DiscussionCard(item)
+
                     i++
                 }
             }
@@ -89,7 +120,7 @@ fun Discussions() {
 }
 
 @Composable
-fun tmp() {
+fun DiscussionsTop() {
     var search = remember {
         mutableStateOf("")
     }
@@ -207,13 +238,5 @@ fun tmp() {
                 )
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview2() {
-    TalknityTheme {
-        Discussions()
     }
 }

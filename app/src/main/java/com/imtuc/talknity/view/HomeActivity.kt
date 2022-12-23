@@ -110,7 +110,7 @@ fun HomeScreen(homeViewModel: HomeViewModel, lifecycleOwner: LifecycleOwner) {
             post.clear()
             post.addAll(homeViewModel.posts.value!!)
 
-            Log.e("post Home", post.toString())
+            Log.e("Discussion Home", post.toString())
         } else {
             Toast.makeText(context, homeViewModel.posterror.value, Toast.LENGTH_SHORT).show()
         }

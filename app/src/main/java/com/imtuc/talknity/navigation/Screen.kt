@@ -10,4 +10,5 @@ sealed class Screen(val route: String) {
     object SelectedCommunityCategory:Screen(route = "selected_community_category_screen")
     object CommunityDetail:Screen(route = "community_detail_screen")
     object CreateCommunity:Screen(route = "create_community_screen")
+    object OwnedCommunity:Screen(route = "owned_community_screen")
 }

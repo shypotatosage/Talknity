@@ -53,7 +53,9 @@ class AuthViewModel @Inject constructor(
                     editor.putString("user_displayname", response.body()?.get("user_displayname")?.asString)
                     editor.putString("user_email", response.body()?.get("user_email")?.asString)
                     editor.putString("user_image", response.body()?.get("user_image")?.asString)
-                    editor.putString("user_id", response.body()?.get("user_id")?.asString)
+                    editor.putInt("user_id", response.body()?.get("user_id")!!.asInt)
+
+                    editor.commit()
                 } else if (response.body()?.get("message")?.asString == "crypto/bcrypt: hashedPassword is not the hash of the given password"){
                     _login.value = "Password Is Incorrect"
                 } else if (response.body()?.get("message")?.asString == "sql: no rows in result set") {

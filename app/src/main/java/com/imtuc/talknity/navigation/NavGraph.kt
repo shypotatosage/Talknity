@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.imtuc.talknity.view.*
 import com.imtuc.talknity.viewmodel.AuthViewModel
+import com.imtuc.talknity.viewmodel.CommunityViewModel
 import com.imtuc.talknity.viewmodel.HomeViewModel
 
 @Composable
@@ -14,16 +15,17 @@ fun SetupNavGraph(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
+    communityViewModel: CommunityViewModel,
     lifecycleOwner: LifecycleOwner
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = Screen.Community.route
     ) {
         composable(
             route = Screen.Splash.route
         ) {
-            SplashScreen()
+            AnimatedSplashScreen(navController = navController)
         }
 
         composable(
@@ -54,6 +56,18 @@ fun SetupNavGraph(
             route = Screen.CommunityCategory.route
         ) {
             CommunityCategories()
+        }
+
+        composable(
+            route = Screen.CreateCommunity.route
+        ) {
+            CreateCommunity(communityViewModel = communityViewModel)
+        }
+
+        composable(
+            route = Screen.OwnedCommunity.route
+        ) {
+            OwnedCommunity(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
     }
 }

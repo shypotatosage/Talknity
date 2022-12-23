@@ -137,7 +137,9 @@ fun EnterCommunity(navController: NavController) {
                     .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
                 contentPadding = PaddingValues(),
                 shape = RoundedCornerShape(16.dp),
-                onClick = {},
+                onClick = {
+                          navController.navigate(Screen.CreateCommunity.route)
+                },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.White),
                 elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
             ) {
@@ -153,7 +155,7 @@ fun EnterCommunity(navController: NavController) {
                             .height(80.dp)
                     )
                     Text(
-                        text = "Owned Community",
+                        text = "Create Community",
                         fontFamily = FontFamily(Font(R.font.opensans_bold)),
                         fontSize = 20.sp,
                         color = Orange500,

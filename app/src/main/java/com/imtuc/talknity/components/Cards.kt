@@ -2,6 +2,7 @@ package com.imtuc.talknity.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -13,6 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -24,9 +27,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.imtuc.talknity.R
+import com.imtuc.talknity.helper.Const
 import com.imtuc.talknity.model.Community
 import com.imtuc.talknity.model.CommunityCategory
+import com.imtuc.talknity.model.Post
 import com.imtuc.talknity.view.ui.theme.*
 
 @Composable
@@ -36,13 +42,20 @@ fun CommunityCategoryCard() {
         shadowElevation = 8.dp,
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
-            .padding(13.dp, 0.dp)
+            .padding(13.dp, 12.dp)
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxWidth(0.8f)
-                .height(150.dp),
+                .fillMaxWidth(0.95f)
+                .height(150.dp)
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(Color.Yellow, Color.Red),
+                        start = Offset(0f, Float.POSITIVE_INFINITY),
+                        end = Offset(Float.POSITIVE_INFINITY, 0f)
+                    )
+                ),
             verticalArrangement = Arrangement.Center
         ) {
             Image(
@@ -64,7 +77,7 @@ fun CommunityCategoryCard() {
 }
 
 @Composable
-fun DiscussionCard() {
+fun DiscussionCard(post: Post) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         shadowElevation = 6.dp,
@@ -85,7 +98,12 @@ fun DiscussionCard() {
                     shadowElevation = 6.dp
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.dummypict),
+                        painter =
+                        if (post.creator.user_image.isEmpty()) {
+                            rememberAsyncImagePainter(Const.BASE_URL + "/" + post.creator.user_image)
+                        } else {
+                            painterResource(id = R.drawable.dummypict)
+                               },
                         contentDescription = "Discussion Maker Profile",
                         modifier = Modifier
                             .height(60.dp)
@@ -99,14 +117,14 @@ fun DiscussionCard() {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Jennie Swift",
+                        text = post.creator.user_displayname,
                         fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.opensans_bold)),
                         modifier = Modifier,
                         color = Orange500
                     )
                     Text(
-                        text = "I Just Lost My Cat",
+                        text = post.post_title,
                         fontSize = 22.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                         modifier = Modifier,
@@ -453,12 +471,11 @@ fun IndividualCommunity(community: Community) {
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
             .width(350.dp)
-            .padding(0.dp, 13.dp)
+            .padding(0.dp, 12.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
-                .height(110.dp)
                 .width(500.dp)
                 .padding(10.dp, 13.dp),
             verticalAlignment = Alignment.Top,
@@ -470,12 +487,16 @@ fun IndividualCommunity(community: Community) {
                     .fillMaxHeight(),
                 verticalArrangement = Arrangement.Top,
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.ownedcommunity),
-                    contentDescription = "Community Logo",
-                    modifier = Modifier
-                        .size(45.dp)
-                )
+                Surface(
+                    shape = RoundedCornerShape(100.dp)
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(Const.BASE_URL + "/" + community.community_logo),
+                        contentDescription = "Community Logo",
+                        modifier = Modifier
+                            .size(45.dp)
+                    )
+                }
             }
             Column(
                 horizontalAlignment = Alignment.Start,
@@ -487,28 +508,34 @@ fun IndividualCommunity(community: Community) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = community.community_name,
                         textAlign = TextAlign.Start,
-                        fontSize = 18.sp,
+                        fontSize = 22.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.ownedcommunity),
-                        contentDescription = "Members Count",
                         modifier = Modifier
-                            .size(30.dp)
-                            .padding(5.dp, 0.dp)
+                            .fillMaxWidth(0.6f)
                     )
-                    Text(
-                        text = "50 Members",
-                        textAlign = TextAlign.Start,
-                        fontSize = 12.sp,
-                        fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ownedcommunity),
+                            contentDescription = "Members Count",
+                            modifier = Modifier
+                                .size(30.dp)
+                                .padding(5.dp, 0.dp)
+                        )
+                        Text(
+                            text = "50 Members",
+                            textAlign = TextAlign.Start,
+                            fontSize = 13.sp,
+                            fontFamily = FontFamily(Font(R.font.robotoslab_regular)),
+                        )
+                    }
                 }
                 Text(
                     text =  if (community.community_description.length > 75) { community.community_description.substring(0, 74) } else { community.community_description },
@@ -516,8 +543,8 @@ fun IndividualCommunity(community: Community) {
                         .padding(0.dp, 5.dp)
                         .fillMaxHeight(),
                     textAlign = TextAlign.Start,
-                    fontSize = 11.sp,
-                    fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                    fontSize = 14.sp,
+                    fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 )
             }
         }
@@ -537,10 +564,8 @@ fun CommunityMember() {
 
             Surface(
                 modifier = Modifier
-
                     .padding(0.dp, 10.dp, 0.dp, 3.dp)
                     .wrapContentSize(),
-
                 shape = RoundedCornerShape(20.dp),
                 shadowElevation = 6.dp,
             ) {
@@ -552,8 +577,6 @@ fun CommunityMember() {
                         .width(60.dp),
                     contentScale = ContentScale.Crop
                 )
-
-
             }
             Text(
                 text = "John",
@@ -600,7 +623,7 @@ fun CommunityLeader() {
             Surface(
                 modifier = Modifier
 
-                    .padding(0.dp,10.dp, 0.dp,3.dp)
+                    .padding(0.dp, 10.dp, 0.dp, 3.dp)
                     .wrapContentSize(),
 
                 shape = RoundedCornerShape(20.dp),

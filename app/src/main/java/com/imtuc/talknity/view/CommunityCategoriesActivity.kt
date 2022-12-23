@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -81,7 +82,7 @@ fun CommunityCategories() {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Communities",
+                        text = "Community Category",
                         fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                         fontSize = 28.sp,
                         color = SoftBlack
@@ -131,6 +132,29 @@ fun CommunityCategories() {
                                             fontSize = 16.sp,
                                             fontFamily = FontFamily(Font(R.font.opensans_regular))
                                         )
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                                            contentDescription = "Search",
+                                            modifier = Modifier
+                                                .height(32.dp)
+                                        )
+                                    }
+
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth()
+                                            .padding(0.dp, 5.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        innerTextField()
+                                    }
+                                } else {
+                                    Row(
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        innerTextField()
                                         Image(
                                             painter = painterResource(id = R.drawable.ic_baseline_search_24),
                                             contentDescription = "Search",
@@ -139,7 +163,6 @@ fun CommunityCategories() {
                                         )
                                     }
                                 }
-                                innerTextField()  //<-- Add this
                             }
                         },
                         textStyle = TextStyle(
@@ -150,6 +173,8 @@ fun CommunityCategories() {
                 }
             }
             LazyVerticalGrid(
+                modifier = Modifier
+                    .padding(20.dp, 8.dp),
                 cells = GridCells.Fixed(2),
                 content = {
                     items(4) {
