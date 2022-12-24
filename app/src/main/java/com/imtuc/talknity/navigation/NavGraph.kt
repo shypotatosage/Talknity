@@ -9,6 +9,7 @@ import com.imtuc.talknity.view.*
 import com.imtuc.talknity.viewmodel.AuthViewModel
 import com.imtuc.talknity.viewmodel.CommunityViewModel
 import com.imtuc.talknity.viewmodel.HomeViewModel
+import com.imtuc.talknity.viewmodel.PostViewModel
 
 @Composable
 fun SetupNavGraph(
@@ -16,11 +17,12 @@ fun SetupNavGraph(
     authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
     communityViewModel: CommunityViewModel,
+    postViewModel: PostViewModel,
     lifecycleOwner: LifecycleOwner
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Community.route
+        startDestination = Screen.Discussions.route
     ) {
         composable(
             route = Screen.Splash.route
@@ -55,7 +57,7 @@ fun SetupNavGraph(
         composable(
             route = Screen.CommunityCategory.route
         ) {
-            CommunityCategories()
+            CommunityCategories(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner)
         }
 
         composable(
@@ -68,6 +70,18 @@ fun SetupNavGraph(
             route = Screen.OwnedCommunity.route
         ) {
             OwnedCommunity(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.Discussions.route
+        ) {
+            Discussions(postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.CreateDiscussion.route
+        ) {
+            CreateDiscussion()
         }
     }
 }

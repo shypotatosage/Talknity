@@ -36,7 +36,7 @@ import com.imtuc.talknity.model.Post
 import com.imtuc.talknity.view.ui.theme.*
 
 @Composable
-fun CommunityCategoryCard() {
+fun CommunityCategoryCard(category: CommunityCategory) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         shadowElevation = 8.dp,
@@ -51,7 +51,11 @@ fun CommunityCategoryCard() {
                 .height(150.dp)
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(Color.Yellow, Color.Red),
+                        colors = listOf(
+                            Color(android.graphics.Color.parseColor("#" + category.category_color1)),
+                            Color(android.graphics.Color.parseColor("#" + category.category_color2)),
+                            Color(android.graphics.Color.parseColor("#" + category.category_color3)),
+                        ),
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
@@ -59,13 +63,13 @@ fun CommunityCategoryCard() {
             verticalArrangement = Arrangement.Center
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ownedcommunity),
+                painter = rememberAsyncImagePainter(Const.BASE_URL + "/" + category.category_logo),
                 contentDescription = "Category Image",
                 modifier = Modifier
                     .height(40.dp)
             )
             Text(
-                text = "All Categories",
+                text = category.category_name,
                 textAlign = TextAlign.Center,
                 fontSize = 20.sp,
                 fontFamily = FontFamily(Font(R.font.opensans_semibold)),
@@ -87,7 +91,7 @@ fun DiscussionCard(post: Post) {
     ) {
         Column(
             modifier = Modifier
-                .padding(16.dp, 24.dp)
+                .padding(16.dp, 20.dp)
                 .fillMaxWidth(0.85f)
         ) {
             Row() {
@@ -99,10 +103,10 @@ fun DiscussionCard(post: Post) {
                 ) {
                     Image(
                         painter =
-                        if (post.creator.user_image.isEmpty()) {
+                        if (post.creator.user_image.isNotEmpty() && !post.anonymous) {
                             rememberAsyncImagePainter(Const.BASE_URL + "/" + post.creator.user_image)
                         } else {
-                            painterResource(id = R.drawable.dummypict)
+                            painterResource(id = R.drawable.defaultprofilepicture)
                                },
                         contentDescription = "Discussion Maker Profile",
                         modifier = Modifier
@@ -117,14 +121,24 @@ fun DiscussionCard(post: Post) {
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = post.creator.user_displayname,
+                        text =
+                        if (!post.anonymous) {
+                            post.creator.user_displayname
+                        } else {
+                               "Unknown"
+                               },
                         fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.opensans_bold)),
                         modifier = Modifier,
                         color = Orange500
                     )
                     Text(
-                        text = post.post_title,
+                        text =
+                        if (post.post_title.length > 35) {
+                            post.post_title.trim().substring(0, 34) + "..."
+                        } else {
+                            post.post_title
+                        },
                         fontSize = 22.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                         modifier = Modifier,
@@ -132,30 +146,37 @@ fun DiscussionCard(post: Post) {
                     )
                 }
             }
-            Surface(
-                modifier = Modifier
-                    .padding(0.dp, 20.dp),
-                shape = RoundedCornerShape(25.dp),
-                shadowElevation = 6.dp
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.dummypict),
-                    contentDescription = "Discussion Picture",
+
+            if (post.post_image.isNotEmpty()) {
+                Surface(
                     modifier = Modifier
-                        .height(150.dp)
-                        .fillMaxWidth(),
-                    contentScale = ContentScale.Crop
-                )
+                        .padding(0.dp, 20.dp, 0.dp, 0.dp),
+                    shape = RoundedCornerShape(25.dp),
+                    shadowElevation = 6.dp
+                ) {
+                    Image(
+                        painter = rememberAsyncImagePainter(Const.BASE_URL + "/" + post.post_image),
+                        contentDescription = "Discussion Picture",
+                        modifier = Modifier
+                            .height(150.dp)
+                            .fillMaxWidth(),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             }
+
             Text(
-                text = "Lorem ipsum dolor sit amet, consectetur adipiscing" +
-                        " elit, sed do eiusmod tempor incididunt ut " +
-                        "labore et dolore magna aliqua.....",
+                text =
+                if (post.post_content.trim().length > 125) {
+                    post.post_content.trim().substring(0, 124) + "..."
+                } else {
+                    post.post_content
+                },
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.opensans_regular)),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(0.dp, 0.dp, 0.dp, 12.dp)
+                    .padding(0.dp, 20.dp, 0.dp, 12.dp)
             )
             Row(
                 modifier = Modifier
@@ -168,58 +189,58 @@ fun DiscussionCard(post: Post) {
                         .wrapContentWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                    ) {
-                        Surface(
-                            modifier = Modifier
-                                .wrapContentSize(),
-                            shape = RoundedCornerShape(100.dp),
-                            shadowElevation = 6.dp
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.dummypict),
-                                contentDescription = "Commentator 1 Profile",
-                                modifier = Modifier
-                                    .height(36.dp)
-                                    .width(36.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        Surface(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .padding(start = 20.dp),
-                            shape = RoundedCornerShape(100.dp),
-                            shadowElevation = 6.dp
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.dummypict),
-                                contentDescription = "Commentator 2 Profile",
-                                modifier = Modifier
-                                    .height(36.dp)
-                                    .width(36.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        Surface(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .padding(start = 40.dp),
-                            shape = RoundedCornerShape(100.dp),
-                            shadowElevation = 6.dp
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.dummypict),
-                                contentDescription = "Commentator 3 Profile",
-                                modifier = Modifier
-                                    .height(36.dp)
-                                    .width(36.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
+//                    Box(
+//                        modifier = Modifier
+//                            .wrapContentWidth()
+//                    ) {
+//                        Surface(
+//                            modifier = Modifier
+//                                .wrapContentSize(),
+//                            shape = RoundedCornerShape(100.dp),
+//                            shadowElevation = 6.dp
+//                        ) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.dummypict),
+//                                contentDescription = "Commentator 1 Profile",
+//                                modifier = Modifier
+//                                    .height(36.dp)
+//                                    .width(36.dp),
+//                                contentScale = ContentScale.Crop
+//                            )
+//                        }
+//                        Surface(
+//                            modifier = Modifier
+//                                .wrapContentSize()
+//                                .padding(start = 20.dp),
+//                            shape = RoundedCornerShape(100.dp),
+//                            shadowElevation = 6.dp
+//                        ) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.dummypict),
+//                                contentDescription = "Commentator 2 Profile",
+//                                modifier = Modifier
+//                                    .height(36.dp)
+//                                    .width(36.dp),
+//                                contentScale = ContentScale.Crop
+//                            )
+//                        }
+//                        Surface(
+//                            modifier = Modifier
+//                                .wrapContentSize()
+//                                .padding(start = 40.dp),
+//                            shape = RoundedCornerShape(100.dp),
+//                            shadowElevation = 6.dp
+//                        ) {
+//                            Image(
+//                                painter = painterResource(id = R.drawable.dummypict),
+//                                contentDescription = "Commentator 3 Profile",
+//                                modifier = Modifier
+//                                    .height(36.dp)
+//                                    .width(36.dp),
+//                                contentScale = ContentScale.Crop
+//                            )
+//                        }
+//                    }
                     Text(
                         text = "20+ Comments",
                         fontSize = 14.sp,
@@ -235,7 +256,7 @@ fun DiscussionCard(post: Post) {
                     colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)) {
                     Text(
                         text = "View",
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         fontFamily = FontFamily(Font(R.font.opensans_semibold)),
                         color = GreyishWhite
                     )

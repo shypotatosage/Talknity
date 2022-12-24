@@ -18,8 +18,17 @@ class ItemRepository@Inject constructor(
     suspend fun getCommunityCategories()
             = api.getCommunityCategories()
 
+    suspend fun searchCommunityCategories(key: String)
+            = api.searchCommunityCategories(key)
+
     suspend fun getPostHome()
             = api.getPostHome()
+
+    suspend fun getPost()
+            = api.getPost()
+
+    suspend fun searchPosts(key: String)
+            = api.searchPosts(key)
 
     suspend fun createCommunity(
         desc: RequestBody,

@@ -28,17 +28,29 @@ interface EndPointAPI {
     @GET("/get-communitieshome")
     suspend fun getCommunityHome(): Response<JsonObject>
 
-    @FormUrlEncoded
-    @POST("/get-ownedcommunities")
+    @GET("/get-ownedcommunities/{user_id}")
     suspend fun getOwnedCommunities(
-        @Field("user_id") user_id: String,
+        @Path("user_id") user_id: String,
     ): Response<JsonObject>
 
     @GET("/get-communitycategories")
     suspend fun getCommunityCategories(): Response<JsonObject>
 
+    @GET("/search-communitycategories/{search_key}")
+    suspend fun searchCommunityCategories(
+        @Path("search_key") search_key: String
+    ): Response<JsonObject>
+
     @GET("/get-postshome")
     suspend fun getPostHome(): Response<JsonObject>
+
+    @GET("/get-posts")
+    suspend fun getPost(): Response<JsonObject>
+
+    @GET("/search-posts/{search_key}")
+    suspend fun searchPosts(
+        @Path("search_key") search_key: String
+    ): Response<JsonObject>
 
     @Multipart
     @FormUrlEncoded
