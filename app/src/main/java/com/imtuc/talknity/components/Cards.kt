@@ -3,6 +3,7 @@ package com.imtuc.talknity.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
@@ -27,16 +28,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import com.imtuc.talknity.R
 import com.imtuc.talknity.helper.Const
 import com.imtuc.talknity.model.Community
 import com.imtuc.talknity.model.CommunityCategory
 import com.imtuc.talknity.model.Post
+import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.*
 
 @Composable
-fun CommunityCategoryCard(category: CommunityCategory) {
+fun CommunityCategoryCard(category: CommunityCategory, navController: NavHostController) {
     Surface(
         shape = RoundedCornerShape(16.dp),
         shadowElevation = 8.dp,
@@ -59,7 +62,14 @@ fun CommunityCategoryCard(category: CommunityCategory) {
                         start = Offset(0f, Float.POSITIVE_INFINITY),
                         end = Offset(Float.POSITIVE_INFINITY, 0f)
                     )
-                ),
+                )
+                .clickable {
+                           navController.navigate(
+                               Screen.SelectedCommunityCategory.passParam(
+                                   category.category_id,
+                                   category.category_name
+                               ))
+                },
             verticalArrangement = Arrangement.Center
         ) {
             Image(

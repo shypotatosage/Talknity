@@ -18,4 +18,8 @@ class AuthRepository @Inject constructor(
         user_email: String)
             = api.login(user_usernameemail, user_email)
 
+    suspend fun getProfile(
+        user_id: String)
+            = api.getProfile(user_id)
+
 }

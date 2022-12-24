@@ -1,8 +1,11 @@
 package com.imtuc.talknity.view
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.style.UnderlineSpan
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -52,6 +55,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.navigation.NavHostController
+import com.imtuc.talknity.model.CommunityCategory
+import com.imtuc.talknity.model.User
+import com.imtuc.talknity.navigation.Screen
+import com.imtuc.talknity.viewmodel.AuthViewModel
 
 class ProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,7 +73,7 @@ class ProfileActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Profile()
+//                    Profile()
                 }
             }
         }
@@ -72,12 +82,27 @@ class ProfileActivity : ComponentActivity() {
 }
 
 @Composable
-fun Profile() {
+fun Profile(authViewModel: AuthViewModel, navController: NavHostController, lifecycleOwner: LifecycleOwner) {
     val context = LocalContext.current
 
-    var loginUserOrEmail = remember {
-        mutableStateOf("")
+    var user = remember {
+        mutableStateOf<User>(User("-1", "", "", "", ""))
     }
+
+    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+
+    authViewModel.getProfile(preferences.getInt("user_id", -1).toString())
+
+    authViewModel.profile.observe(lifecycleOwner, Observer { response ->
+        if (response.user_id.toInt() > -1) {
+            user.value = response
+
+            Log.e("Profile", user.toString())
+        } else {
+            Toast.makeText(context, "Failed To Get Your Profile", Toast.LENGTH_SHORT)
+                .show()
+        }
+    })
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
@@ -101,7 +126,7 @@ fun Profile() {
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.dummypict),
-                    contentDescription = "Back",
+                    contentDescription = "Profile Picture",
                     contentScale = ContentScale.Crop,
                 )
             }
@@ -119,7 +144,7 @@ fun Profile() {
                     verticalArrangement = Arrangement.Center,
                 ) {
                     Text(
-                        text = "James Bond",
+                        text = user.value.user_displayname,
                         textAlign = TextAlign.Center,
                         fontSize = 25.sp,
                         fontFamily = FontFamily(Font(R.font.opensans_bold)),
@@ -167,7 +192,7 @@ fun Profile() {
                         color = SoftBlack
                     )
                     Text(
-                        text = "James Bond",
+                        text = user.value.user_username,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                         fontSize = 20.sp,
                         color = Gray300
@@ -186,7 +211,7 @@ fun Profile() {
                         color = SoftBlack
                     )
                     Text(
-                        text = "jamesbond@gmail.com",
+                        text = user.value.user_email,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                         fontSize = 20.sp,
                         color = Gray300
@@ -252,7 +277,10 @@ fun Profile() {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .padding(15.dp, 15.dp),
+                            .padding(15.dp, 15.dp)
+                            .clickable {
+                                navController.navigate(Screen.OwnedCommunity.route)
+                            },
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
@@ -281,7 +309,10 @@ fun Profile() {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
-                            .padding(15.dp, 15.dp),
+                            .padding(15.dp, 15.dp)
+                            .clickable {
+                                       navController.navigate(Screen.OwnedDiscussion.route)
+                            },
                         verticalArrangement = Arrangement.Center
                     ) {
                         Image(
@@ -303,13 +334,5 @@ fun Profile() {
             }
 
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ProfilePreview() {
-    TalknityTheme {
-        Profile()
     }
 }

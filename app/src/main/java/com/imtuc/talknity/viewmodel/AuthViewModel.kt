@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.imtuc.talknity.model.User
 import com.imtuc.talknity.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -79,7 +80,44 @@ class AuthViewModel @Inject constructor(
 
                 Log.d("Login User", _login.value.toString())
             } else {
-                Log.e("Login User", response.body()?.get("message")!!.asString)
+                Log.e("Login User", response.message())
+            }
+        }
+    }
+
+    val _profile: MutableLiveData<User> by lazy {
+        MutableLiveData<User>()
+    }
+
+    val profile: LiveData<User>
+        get() = _profile
+
+    fun getProfile(uid: String)
+            = viewModelScope.launch {
+        repo.getProfile(uid).let {
+                response ->
+            if (response.isSuccessful) {
+                if (response.body()?.get("message")?.asString == "Login successful") {
+                    var user = response.body()!!.get("data")
+
+                    var user_id = user.asJsonObject["id"].asString
+                    var user_username = user.asJsonObject["user_username"].asString
+                    var user_displayname = user.asJsonObject["user_displayname"].asString
+                    var user_email = user.asJsonObject["user_email"].asString
+                    var user_image = user.asJsonObject["user_image"].asString
+
+                    _profile.value = User(
+                        user_id,
+                        user_username,
+                        user_displayname,
+                        user_email,
+                        user_image
+                    )
+                }
+
+                Log.d("User Profile", _profile.value.toString())
+            } else {
+                Log.e("User Profile", response.message())
             }
         }
     }
