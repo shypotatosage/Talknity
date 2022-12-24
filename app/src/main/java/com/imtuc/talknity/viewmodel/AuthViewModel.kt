@@ -21,16 +21,29 @@ class AuthViewModel @Inject constructor(
     private val repo: AuthRepository
 ): ViewModel() {
 
+    val _register: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+
+    val register: LiveData<String>
+        get() = _register
+
     fun registerUser(user_username: String, user_email: String, user_password: String)
             = viewModelScope.launch {
         repo.registerUser(user_username, user_email, user_password).let {
                 response ->
             if (response.isSuccessful) {
+                _register.value = "User Successfully Registered"
                 Log.d("Register User", response.body().toString())
             } else {
+                _register.value = response.message()
                 Log.e("Register User", "Failed!")
             }
         }
+    }
+
+    fun resetRegister() {
+        _register.value = null
     }
 
     val _login: MutableLiveData<String> by lazy {
@@ -56,9 +69,9 @@ class AuthViewModel @Inject constructor(
                     editor.putInt("user_id", response.body()?.get("user_id")!!.asInt)
 
                     editor.commit()
-                } else if (response.body()?.get("message")?.asString == "crypto/bcrypt: hashedPassword is not the hash of the given password"){
+                } else if (response.body()?.get("message")?.asString == "Password does not match!"){
                     _login.value = "Password Is Incorrect"
-                } else if (response.body()?.get("message")?.asString == "sql: no rows in result set") {
+                } else if (response.body()?.get("message")?.asString == "Username/Email does not exist!") {
                     _login.value = "Username/Email Is Not Registered Yet"
                 } else {
                     _login.value = "Login Failed"

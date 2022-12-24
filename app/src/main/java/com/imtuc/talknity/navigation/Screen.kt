@@ -12,5 +12,6 @@ sealed class Screen(val route: String) {
     object CreateCommunity:Screen(route = "create_community_screen")
     object OwnedCommunity:Screen(route = "owned_community_screen")
     object Discussions:Screen(route = "discussions_screen")
+    object OwnedDiscussion:Screen(route = "owned_discussions_screen")
     object CreateDiscussion:Screen(route = "create_discussions_screen")
 }

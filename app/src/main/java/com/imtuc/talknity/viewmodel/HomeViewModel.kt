@@ -121,6 +121,8 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun clearCommunityError() {}
+
     val _posts: MutableLiveData<List<Post>> by lazy {
         MutableLiveData<List<Post>>()
     }

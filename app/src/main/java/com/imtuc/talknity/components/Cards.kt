@@ -87,7 +87,7 @@ fun DiscussionCard(post: Post) {
         shadowElevation = 6.dp,
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
-            .padding(0.dp, 8.dp)
+            .padding(0.dp, 16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -488,11 +488,11 @@ fun CommentCard() {
 fun IndividualCommunity(community: Community) {
     Surface(
         shape = RoundedCornerShape(16.dp),
-        shadowElevation = 8.dp,
+        shadowElevation = 6.dp,
         modifier = Modifier
             .wrapContentSize(align = Alignment.Center)
             .width(350.dp)
-            .padding(0.dp, 12.dp)
+            .padding(0.dp, 16.dp)
     ) {
         Row(
             modifier = Modifier
@@ -538,7 +538,7 @@ fun IndividualCommunity(community: Community) {
                         fontSize = 22.sp,
                         fontFamily = FontFamily(Font(R.font.robotoslab_semibold)),
                         modifier = Modifier
-                            .fillMaxWidth(0.6f)
+                            .fillMaxWidth(0.55f)
                     )
                     Row(
                         verticalAlignment = Alignment.CenterVertically

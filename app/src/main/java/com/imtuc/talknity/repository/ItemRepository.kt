@@ -27,6 +27,9 @@ class ItemRepository@Inject constructor(
     suspend fun getPost()
             = api.getPost()
 
+    suspend fun getOwnedPosts(uid: String)
+            = api.getOwnedPosts(uid)
+
     suspend fun searchPosts(key: String)
             = api.searchPosts(key)
 
@@ -40,5 +43,13 @@ class ItemRepository@Inject constructor(
         leader_id: String
     )
             = api.createCommunity(desc, community_logo, community_name, community_description, community_contact, category_id, leader_id)
+
+    suspend fun createPost(
+        post_title: String,
+        post_content: String,
+        anonymous: Boolean,
+        uid: String
+    )
+            = api.createPost(post_title, post_content, anonymous, uid)
 
 }

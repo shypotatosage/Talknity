@@ -43,8 +43,10 @@ class CommunityViewModel @Inject constructor(
 
                     var tmpArrList = arrayListOf<Community>()
 
-                    if (!response!!.body()!!.get("data").isJsonNull) {
-                        val arr: JsonArray = response!!.body()!!.getAsJsonArray("data")
+                    tmpArrList.add(Community("0", "Temp", "Temp", "Temp", "Temp", "Temp", CommunityCategory("0", "All Category", "images/category/category_icon_183800.png", "FF7800", "FBB372", "F7F7F7"), User("0", "Temp", "Temp", "Temp", "Temp")))
+
+                    if (!response.body()!!.get("data").isJsonNull) {
+                        val arr: JsonArray = response.body()!!.getAsJsonArray("data")
 
                         for (item in arr) {
                             var community_id = item.asJsonObject["id"].asString
@@ -142,8 +144,8 @@ class CommunityViewModel @Inject constructor(
 
                     tmpArrList.add(CommunityCategory("0", "All Category", "images/category/category_icon_183800.png", "FF7800", "FBB372", "F7F7F7"))
 
-                    if (!response!!.body()!!.get("data").isJsonNull) {
-                        val arr: JsonArray = response!!.body()!!.getAsJsonArray("data")
+                    if (!response.body()!!.get("data").isJsonNull) {
+                        val arr: JsonArray = response.body()!!.getAsJsonArray("data")
 
                         for (item in arr) {
                             var category_id = item.asJsonObject["id"].asString

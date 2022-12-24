@@ -8,8 +8,8 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
@@ -306,7 +306,7 @@ fun CommunityDetail() {
                 )
             }
             LazyVerticalGrid(
-                cells = GridCells.Fixed(3),
+                columns = GridCells.Fixed(3),
                 content = {
                     items(1) {
                         CommunityLeader()

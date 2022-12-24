@@ -22,7 +22,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Discussions.route
+        startDestination = Screen.OwnedDiscussion.route
     ) {
         composable(
             route = Screen.Splash.route
@@ -39,13 +39,13 @@ fun SetupNavGraph(
         composable(
             route = Screen.Login.route
         ) {
-            Login(authViewModel = authViewModel, lifecycleOwner = lifecycleOwner)
+            Login(authViewModel = authViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(
             route = Screen.Register.route
         ) {
-            Register(authViewModel = authViewModel)
+            Register(authViewModel = authViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(
@@ -79,9 +79,15 @@ fun SetupNavGraph(
         }
 
         composable(
+            route = Screen.OwnedDiscussion.route
+        ) {
+            OwnedDiscussions(postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
             route = Screen.CreateDiscussion.route
         ) {
-            CreateDiscussion()
+            CreateDiscussion(postViewModel = postViewModel, navController = navController, lifecycleOwner = lifecycleOwner)
         }
     }
 }

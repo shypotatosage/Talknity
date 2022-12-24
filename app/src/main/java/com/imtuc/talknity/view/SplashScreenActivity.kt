@@ -1,5 +1,6 @@
 package com.imtuc.talknity.view
 
+import android.Manifest
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -27,7 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.imtuc.talknity.R
+import com.imtuc.talknity.helper.RequestMultiplePermissions
 import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
@@ -51,8 +54,18 @@ class SplashScreenActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun AnimatedSplashScreen(navController: NavHostController) {
+    RequestMultiplePermissions(
+        permissions = listOf(
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.MANAGE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET
+        )
+    )
+
     var startAnimation by remember {
         mutableStateOf(false)
     }

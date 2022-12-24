@@ -1,80 +1,63 @@
 package com.imtuc.talknity.view
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.net.Uri
-import android.os.Build
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.*
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.components.DiscussionCard
 import com.imtuc.talknity.components.IndividualCommunity
 import com.imtuc.talknity.model.Community
+import com.imtuc.talknity.model.Post
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
-import com.imtuc.talknity.viewmodel.CommunityViewModel
+import com.imtuc.talknity.viewmodel.PostViewModel
 
 @Composable
-fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
+fun OwnedDiscussions(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
     val context = LocalContext.current
 
-    var community = remember {
-        mutableStateListOf<Community>()
+    var discussion = remember {
+        mutableStateListOf<Post>()
     }
 
     val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
 
-    communityViewModel.getOwnedCommunities(preferences.getInt("user_id", -1).toString())
+    postViewModel.getOwnedPosts(preferences.getInt("user_id", -1).toString())
 
-    communityViewModel.ownedCommunities.observe(lifecycleOwner, Observer {
+    postViewModel.ownedPosts.observe(lifecycleOwner, Observer {
             response ->
-        if (communityViewModel.ownedCommunitiesError.value == "Get Data Successful") {
-            community.clear()
-            community.addAll(communityViewModel.ownedCommunities.value!!)
+        if (postViewModel.ownedPostsError.value == "Get Data Successful") {
+            discussion.clear()
+            discussion.addAll(postViewModel.ownedPosts.value!!)
 
-            Log.d("Owned Communities", community.toString())
+            Log.d("Owned Communities", discussion.toString())
         } else {
-            Toast.makeText(context, communityViewModel.ownedCommunitiesError.value, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, postViewModel.ownedPostsError.value, Toast.LENGTH_SHORT).show()
         }
     })
 
@@ -93,11 +76,11 @@ fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Lifec
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            itemsIndexed(items = community) { index, item ->
+            itemsIndexed(items = discussion) { index, item ->
                 if (index == 0) {
-                    OwnedCommunityTop(navController)
+                    OwnedDiscussionsTop(navController)
                 } else {
-                    IndividualCommunity(community = item)
+                    DiscussionCard(post = item)
                 }
             }
         }
@@ -105,7 +88,7 @@ fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Lifec
 }
 
 @Composable
-fun OwnedCommunityTop(navController: NavHostController) {
+fun OwnedDiscussionsTop(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -150,7 +133,7 @@ fun OwnedCommunityTop(navController: NavHostController) {
                 color = SoftBlack
             )
             Text(
-                text = "Community",
+                text = "Discussion",
                 fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                 fontSize = 30.sp,
                 color = Orange500

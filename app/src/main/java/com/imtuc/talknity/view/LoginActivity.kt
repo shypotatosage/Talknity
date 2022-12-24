@@ -49,12 +49,15 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
+import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -75,7 +78,7 @@ class LoginActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Login(authViewModel, this)
+//                    Login(authViewModel, this)
                 }
             }
         }
@@ -84,22 +87,12 @@ class LoginActivity : ComponentActivity() {
 }
 
 @Composable
-fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
+fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
     val context = LocalContext.current
 
     var loginUserOrEmail = remember {
         mutableStateOf("")
     }
-
-    var password = remember {
-        mutableStateOf("")
-    }
-
-    var passwordNoStar = remember {
-        mutableStateOf("")
-    }
-
-    var passwordStar = countChar(passwordNoStar.value)
 
     var passwordValue = remember {
         mutableStateOf("")
@@ -115,13 +108,36 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
         Icons.Filled.VisibilityOff
     }
 
+    var passwordRequired = remember {
+        mutableStateOf(false)
+    }
+
+    var emailUsernameRequired = remember {
+        mutableStateOf(false)
+    }
+
+    var loginSuccess = remember {
+        mutableStateOf(false)
+    }
+
     authViewModel.login.observe(lifecycleOwner, Observer {
         response ->
         if(response != null){
-            if (response == "Login Successful") {
-                context.startActivity(Intent(context, HomeActivity::class.java))
+            if (response != "Login Successful") {
+                if (response == "Password Is Incorrect") {
+                    passwordRequired.value = true
+                } else {
+                    if (response == "Username/Email Is Not Registered Yet") {
+                        emailUsernameRequired.value = true
+                    } else {
+                        emailUsernameRequired.value = false
+                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                    }
+
+                    passwordRequired.value = false
+                }
             } else {
-                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                loginSuccess.value = true
             }
         }
     })
@@ -158,6 +174,7 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
                     },
                     enabled = true,
                     singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
@@ -196,21 +213,35 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
                         fontSize = 16.sp
                     )
                 )
+                if (emailUsernameRequired.value) {
+                    Text(
+                        text =
+                        if (loginUserOrEmail.value.trim().isNotEmpty()) {
+                            "Username/Email does not exist"
+                        } else {
+                            "Username/Email is required"
+                        },
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
             }
             Column(
                 modifier = Modifier
                     .padding(24.dp, 30.dp),
             ) {
-
                 BasicTextField(
-                    value = password.value,
+                    value = passwordValue.value,
                     onValueChange = {
-                        password.value = it
-                        passwordNoStar.value = it
                         passwordValue.value = it
                     },
+                    visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
                     enabled = true,
                     singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
@@ -240,7 +271,7 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                if (password.value.isEmpty()) {
+                                if (passwordValue.value.isEmpty()) {
                                     Text(
                                         text = "Password",
                                         color = Gray300,
@@ -261,11 +292,6 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
                                         innerTextField()
                                         IconButton(onClick = {
                                             passwordVisible.value = !passwordVisible.value
-                                            if (passwordVisible.value) {
-                                                password.value = passwordNoStar.value
-                                            } else {
-                                                password.value = passwordStar
-                                            }
                                         }) {
                                             Icon(imageVector = image, "")
                                         }
@@ -279,6 +305,21 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
                         fontSize = 16.sp
                     )
                 )
+                if (passwordRequired.value) {
+                    Text(
+                        text =
+                        if (loginUserOrEmail.value.trim().isNotEmpty()) {
+                            "Password does not match"
+                        } else {
+                            "Password is required"
+                        },
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -318,29 +359,28 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner) {
                     fontSize = 18.sp,
                     color = SoftBlack
                 )
-                Button(
-                    onClick = {
-                        context.startActivity(Intent(context, HomeActivity::class.java))
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
-                )
-                {
                     Text(
                         text = "Register Here",
                         fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                         fontSize = 18.sp,
                         color = Orange500,
+                        modifier = Modifier
+                            .clickable {
+                                navController.popBackStack()
+                                navController.navigate(Screen.Register.route)
+                            }
+                            .padding(0.dp, 4.dp)
                     )
-                }
             }
         }
     }
-    
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-    ) {
 
+    if (loginSuccess.value) {
+        LaunchedEffect(Unit) {
+            navController.navigate(Screen.Home.route) {
+                popUpTo(Screen.Login.route) { inclusive = true }
+            }
+        }
     }
 }
 
