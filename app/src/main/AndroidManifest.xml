@@ -2,7 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
+        android:name=".Application"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -11,10 +17,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Talknity"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".view.DiscussionsActivity"
+            android:name=".view.SplashScreenActivity"
             android:exported="false"
+            android:label="@string/title_activity_splash_screen"
+            android:theme="@style/Theme.Talknity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".view.DiscussionsActivity"
+            android:exported="true"
             android:label="@string/title_activity_discussions"
             android:theme="@style/Theme.Talknity">
             <meta-data
@@ -34,15 +50,11 @@
             android:name=".view.EditProfileActivity"
             android:exported="true"
             android:label="@string/title_activity_edit_profile"
-            android:theme="@style/Theme.Talknity">
+            android:theme="@style/Theme.Talknity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".view.CommunityCategoriesActivity"
@@ -56,17 +68,16 @@
         <activity
             android:name=".view.HomeActivity"
             android:exported="true"
-            android:label="Home Activity"
+            android:label="@string/title_activity_home"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
-
         </activity>
         <activity
             android:name=".view.IndividualDiscussionActivity"
             android:exported="true"
-            android:label="@string/title_activity_individual_post"
+            android:label="@string/title_activity_individual_discussion"
             android:theme="@style/Theme.Talknity">
             <meta-data
                 android:name="android.app.lib_name"
@@ -76,7 +87,8 @@
             android:name=".view.LoginActivity"
             android:exported="true"
             android:label="@string/title_activity_login"
-            android:theme="@style/Theme.Talknity">
+            android:theme="@style/Theme.Talknity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -85,7 +97,8 @@
             android:name=".view.CreateDiscussionActivity"
             android:exported="true"
             android:label="@string/title_activity_create_discussion"
-            android:theme="@style/Theme.Talknity">
+            android:theme="@style/Theme.Talknity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -94,12 +107,12 @@
             android:name=".view.RegisterActivity"
             android:exported="true"
             android:label="@string/title_activity_register"
-            android:theme="@style/Theme.Talknity">
+            android:theme="@style/Theme.Talknity"
+            android:windowSoftInputMode="adjustResize">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".view.CommunityActivity"
             android:exported="false"
@@ -121,9 +134,14 @@
         </activity>
         <activity
             android:name=".view.MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:label="@string/title_activity_splash"
             android:theme="@style/Theme.Talknity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

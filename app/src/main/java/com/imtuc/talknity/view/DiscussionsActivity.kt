@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.GridCells
 import androidx.compose.foundation.lazy.LazyColumn
@@ -55,116 +57,155 @@ class DiscussionsActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Discussions() {
+    ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .scrollable(
+                    state = rememberScrollState(),
+                    orientation = Orientation.Vertical,
+                    enabled = true
+                ),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                var i = 0
+                items(4) {
+                    if (i == 0) {
+                        tmp()
+                    }
+                    DiscussionCard()
+                    i++
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun tmp() {
     var search = remember {
         mutableStateOf("")
     }
 
-    ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .statusBarsPadding()
+            .navigationBarsWithImePadding()
+    ) {
+        Row(
             modifier = Modifier
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(20.dp, 24.dp, 20.dp, 0.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(
+            Text(
+                text = "Discussions",
+                fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                fontSize = 28.sp,
+                color = SoftBlack
+            )
+            Button(
+                onClick = { /*TODO*/ },
+                shape = RoundedCornerShape(50.dp),
+                contentPadding = PaddingValues(0.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Orange500,
+                    contentColor = Color.White
+                )
+                ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.addicon),
+                    contentDescription = "Add Discussions",
+                    modifier = Modifier
+                        .size(36.dp, 36.dp)
+                        .padding(4.dp),
+                )
+            }
+        }
+        Surface(
+            modifier = Modifier
+                .padding(20.dp, 20.dp),
+            shadowElevation = 4.dp,
+            border = BorderStroke(
+                width = 0.4.dp,
+                color = GrayBorder
+            ),
+            shape = RoundedCornerShape(25.dp)
+        ) {
+            BasicTextField(
+                value = search.value,
+                onValueChange = {
+                    search.value = it
+                },
+                enabled = true,
+                singleLine = true,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .statusBarsPadding()
-                    .navigationBarsWithImePadding()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Row(
-                    modifier = Modifier
-                        .padding(20.dp, 24.dp, 20.dp, 0.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Text(
-                        text = "Discussions",
-                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                        fontSize = 28.sp,
-                        color = SoftBlack
+                    .navigationBarsWithImePadding(),
+                decorationBox = { innerTextField ->
+                    TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        textColor = SoftBlack
                     )
-                    IconButton(
-                        onClick = { /*TODO*/ },
-
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.AddCircleOutline,
-                            contentDescription = "Add Discussions",
-                        )
-                    }
-                }
-                Surface(
-                    modifier = Modifier
-                        .padding(20.dp, 20.dp),
-                    shadowElevation = 4.dp,
-                    border = BorderStroke(
-                        width = 0.4.dp,
-                        color = GrayBorder
-                    ),
-                    shape = RoundedCornerShape(25.dp)
-                ) {
-                    BasicTextField(
-                        value = search.value,
-                        onValueChange = {
-                            search.value = it
-                        },
-                        enabled = true,
-                        singleLine = true,
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .navigationBarsWithImePadding(),
-                        decorationBox = { innerTextField ->
-                            TextFieldDefaults.textFieldColors(
-                                backgroundColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                unfocusedIndicatorColor = Color.Transparent,
-                                disabledIndicatorColor = Color.Transparent,
-                                textColor = SoftBlack
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .padding(16.dp, 4.dp)
+                            .padding(16.dp, 4.dp),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (search.value.isEmpty()) {
+                            innerTextField()  //<-- Add this
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                if (search.value.isEmpty()) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Text(
-                                            text = "Search",
-                                            color = Gray300,
-                                            fontSize = 16.sp,
-                                            fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                        )
-                                        Image(
-                                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                                            contentDescription = "Search",
-                                            modifier = Modifier
-                                                .height(32.dp)
-                                        )
-                                    }
-                                }
-                                innerTextField()  //<-- Add this
+                                Text(
+                                    text = "Search",
+                                    color = Gray300,
+                                    fontSize = 16.sp,
+                                    fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                )
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                                    contentDescription = "Search",
+                                    modifier = Modifier
+                                        .height(32.dp)
+                                )
                             }
-                        },
-                        textStyle = TextStyle(
-                            fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                            fontSize = 16.sp
-                        )
-                    )
-                }
-            }
-            LazyColumn() {
-                items(4) {
-                    DiscussionCard()
-                }
-            }
+                        } else {
+                            Row(
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                innerTextField()
+                                Image(
+                                    painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                                    contentDescription = "Search",
+                                    modifier = Modifier
+                                        .height(32.dp)
+                                )
+                            }
+                        }
+                    }
+                },
+                textStyle = TextStyle(
+                    fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                    fontSize = 16.sp
+                )
+            )
         }
     }
 }

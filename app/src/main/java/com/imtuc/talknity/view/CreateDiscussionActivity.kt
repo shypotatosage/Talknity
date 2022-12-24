@@ -1,11 +1,13 @@
 package com.imtuc.talknity.view
 
+import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -59,6 +61,7 @@ class CreateDiscussionActivity : ComponentActivity() {
 
 @Composable
 fun CreateDiscussion() {
+
     var postTitle = remember {
         mutableStateOf("")
     }
