@@ -2,6 +2,8 @@ package com.imtuc.talknity.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
@@ -29,17 +31,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
+import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.*
 import com.imtuc.talknity.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.regex.Pattern
 
 @AndroidEntryPoint
 class RegisterActivity : ComponentActivity() {
@@ -58,7 +67,7 @@ class RegisterActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Register(authViewModel)
+//                    Register(authViewModel, this)
                 }
             }
         }
@@ -67,7 +76,11 @@ class RegisterActivity : ComponentActivity() {
 }
 
 @Composable
-fun Register(authViewModel: AuthViewModel) {
+fun Register(
+    authViewModel: AuthViewModel,
+    lifecycleOwner: LifecycleOwner,
+    navController: NavHostController
+) {
     val context = LocalContext.current
 
     var email = remember {
@@ -82,12 +95,6 @@ fun Register(authViewModel: AuthViewModel) {
         mutableStateOf("")
     }
 
-    var passwordNoStar = remember {
-        mutableStateOf("")
-    }
-
-    var passwordStar = countChar(passwordNoStar.value)
-
     var passwordValue = remember {
         mutableStateOf("")
     }
@@ -96,11 +103,35 @@ fun Register(authViewModel: AuthViewModel) {
         mutableStateOf(false)
     }
 
+    var emailRequired = remember {
+        mutableStateOf(false)
+    }
+
+    var usernameRequired = remember {
+        mutableStateOf(false)
+    }
+
+    var passwordRequired = remember {
+        mutableStateOf(false)
+    }
+
     val image = if (passwordVisible.value) {
         Icons.Filled.Visibility
     } else {
         Icons.Filled.VisibilityOff
     }
+
+    authViewModel.register.observe(lifecycleOwner, Observer { response ->
+        if (response != null) {
+            if (response == "User Successfully Registered") {
+                authViewModel.resetRegister()
+                context.startActivity(Intent(context, HomeActivity::class.java))
+            } else {
+                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                authViewModel.resetRegister()
+            }
+        }
+    })
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
@@ -134,6 +165,7 @@ fun Register(authViewModel: AuthViewModel) {
                     },
                     enabled = true,
                     singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
@@ -172,6 +204,16 @@ fun Register(authViewModel: AuthViewModel) {
                         fontSize = 16.sp
                     )
                 )
+                if (emailRequired.value) {
+                    Text(
+                        text = "Email is not valid",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
             }
             Column(
                 modifier = Modifier
@@ -184,6 +226,7 @@ fun Register(authViewModel: AuthViewModel) {
                     },
                     enabled = true,
                     singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
@@ -222,21 +265,30 @@ fun Register(authViewModel: AuthViewModel) {
                         fontSize = 16.sp
                     )
                 )
+                if (usernameRequired.value) {
+                    Text(
+                        text = "Must be 8-20 characters, only . and _ allowed but may not end/start with . or _",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
             }
             Column(
                 modifier = Modifier
                     .padding(24.dp, 30.dp),
             ) {
-
                 BasicTextField(
-                    value = password.value,
+                    value = passwordValue.value,
                     onValueChange = {
-                        password.value = it
-                        passwordNoStar.value = it
                         passwordValue.value = it
                     },
+                    visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
                     enabled = true,
                     singleLine = true,
+                    maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .border(
@@ -266,7 +318,7 @@ fun Register(authViewModel: AuthViewModel) {
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                if (password.value.isEmpty()) {
+                                if (passwordValue.value.isEmpty()) {
                                     Text(
                                         text = "Password",
                                         color = Gray300,
@@ -287,11 +339,6 @@ fun Register(authViewModel: AuthViewModel) {
                                         innerTextField()
                                         IconButton(onClick = {
                                             passwordVisible.value = !passwordVisible.value
-                                            if (passwordVisible.value) {
-                                                password.value = passwordNoStar.value
-                                            } else {
-                                                password.value = passwordStar
-                                            }
                                         }) {
                                             Icon(imageVector = image, "")
                                         }
@@ -305,6 +352,16 @@ fun Register(authViewModel: AuthViewModel) {
                         fontSize = 16.sp
                     )
                 )
+                if (passwordRequired.value) {
+                    Text(
+                        text = "Min. 8 characters, 1 uppercase and lowercase letter, 1 number, 1 special character, and no whitespaces",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
             }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -314,9 +371,40 @@ fun Register(authViewModel: AuthViewModel) {
             ) {
                 Button(
                     onClick = {
-                        authViewModel.registerUser(username.value, email.value, passwordValue.value)
+                        if (!Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#\$%^&+=])[^-\\s]{8,}\$")
+                                .matcher(passwordValue.value).matches()
+                        ) {
+                            passwordRequired.value = true
+                        } else {
+                            passwordRequired.value = false
+                        }
 
-                        context.startActivity(Intent(context, LoginActivity::class.java))
+                        if (!Patterns.EMAIL_ADDRESS.matcher(email.value.trim())
+                                .matches()
+                        ) {
+                            emailRequired.value = true
+                        } else {
+                            emailRequired.value = false
+                        }
+
+                        if (!Pattern.compile("^(?=.{8,20}\$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])\$")
+                                .matcher(username.value.trim()).matches()
+                        ) {
+                            usernameRequired.value = true
+                        } else {
+                            usernameRequired.value = false
+                        }
+
+                        if (!(usernameRequired.value || emailRequired.value || passwordRequired.value)) {
+                            authViewModel.registerUser(
+                                username.value,
+                                email.value,
+                                passwordValue.value
+                            )
+
+                            navController.popBackStack()
+                            navController.navigate(Screen.Login.route)
+                        }
                     },
                     modifier = Modifier
                         .padding(8.dp, 0.dp),
@@ -346,20 +434,18 @@ fun Register(authViewModel: AuthViewModel) {
                     fontSize = 18.sp,
                     color = SoftBlack
                 )
-                Button(
-                    onClick = {
-                        context.startActivity(Intent(context, LoginActivity::class.java))
-                    },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White)
+                Text(
+                    text = "Login Here",
+                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                    fontSize = 18.sp,
+                    color = Orange500,
+                    modifier = Modifier
+                        .clickable {
+                            navController.popBackStack()
+                            navController.navigate(Screen.Login.route)
+                        }
+                        .padding(0.dp, 4.dp)
                 )
-                {
-                    Text(
-                        text = "Login Here",
-                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                        fontSize = 18.sp,
-                        color = Orange500,
-                    )
-                }
             }
         }
     }

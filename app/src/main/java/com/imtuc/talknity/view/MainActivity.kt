@@ -34,7 +34,9 @@ import com.imtuc.talknity.navigation.SetupNavGraph
 //>>>>>>> main
 import com.imtuc.talknity.view.ui.theme.TalknityTheme
 import com.imtuc.talknity.viewmodel.AuthViewModel
+import com.imtuc.talknity.viewmodel.CommunityViewModel
 import com.imtuc.talknity.viewmodel.HomeViewModel
+import com.imtuc.talknity.viewmodel.PostViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,12 +45,16 @@ class MainActivity : ComponentActivity() {
     lateinit var navController: NavHostController
     private lateinit var authViewModel: AuthViewModel
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var communityViewModel: CommunityViewModel
+    private lateinit var postViewModel: PostViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        communityViewModel = ViewModelProvider(this)[CommunityViewModel::class.java]
+        postViewModel = ViewModelProvider(this)[PostViewModel::class.java]
 
         setContent {
             TalknityTheme {
@@ -109,6 +115,8 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     authViewModel = authViewModel,
                     homeViewModel = homeViewModel,
+                    communityViewModel = communityViewModel,
+                    postViewModel = postViewModel,
                     lifecycleOwner = this
 //>>>>>>> main
                 )

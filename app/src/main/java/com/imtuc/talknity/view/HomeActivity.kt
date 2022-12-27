@@ -18,10 +18,7 @@ import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -84,15 +81,11 @@ fun HomeScreen(homeViewModel: HomeViewModel, lifecycleOwner: LifecycleOwner) {
         mutableStateListOf<Community>()
     }
 
-    homeViewModel.getHomeCommunities()
-
     homeViewModel.communities.observe(lifecycleOwner, Observer {
             response ->
         if (homeViewModel.communityerror.value == "Get Data Successful") {
             community.clear()
             community.addAll(homeViewModel.communities.value!!)
-
-            Log.e("Community Home", community.toString())
         } else {
             Toast.makeText(context, homeViewModel.communityerror.value, Toast.LENGTH_SHORT).show()
         }
@@ -102,19 +95,20 @@ fun HomeScreen(homeViewModel: HomeViewModel, lifecycleOwner: LifecycleOwner) {
         mutableStateListOf<Post>()
     }
 
-    homeViewModel.getHomePosts()
-
     homeViewModel.posts.observe(lifecycleOwner, Observer {
             response ->
         if (homeViewModel.posterror.value == "Get Data Successful") {
             post.clear()
             post.addAll(homeViewModel.posts.value!!)
-
-            Log.e("post Home", post.toString())
         } else {
             Toast.makeText(context, homeViewModel.posterror.value, Toast.LENGTH_SHORT).show()
         }
     })
+
+    LaunchedEffect(key1 = true) {
+        homeViewModel.getHomeCommunities()
+        homeViewModel.getHomePosts()
+    }
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(

@@ -7,23 +7,27 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.imtuc.talknity.view.*
 import com.imtuc.talknity.viewmodel.AuthViewModel
+import com.imtuc.talknity.viewmodel.CommunityViewModel
 import com.imtuc.talknity.viewmodel.HomeViewModel
+import com.imtuc.talknity.viewmodel.PostViewModel
 
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
     authViewModel: AuthViewModel,
     homeViewModel: HomeViewModel,
+    communityViewModel: CommunityViewModel,
+    postViewModel: PostViewModel,
     lifecycleOwner: LifecycleOwner
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Splash.route
+        startDestination = Screen.OwnedDiscussion.route
     ) {
         composable(
             route = Screen.Splash.route
         ) {
-            SplashScreen()
+            AnimatedSplashScreen(navController = navController)
         }
 
         composable(
@@ -35,13 +39,13 @@ fun SetupNavGraph(
         composable(
             route = Screen.Login.route
         ) {
-            Login(authViewModel = authViewModel, lifecycleOwner = lifecycleOwner)
+            Login(authViewModel = authViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(
             route = Screen.Register.route
         ) {
-            Register(authViewModel = authViewModel)
+            Register(authViewModel = authViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(
@@ -53,7 +57,37 @@ fun SetupNavGraph(
         composable(
             route = Screen.CommunityCategory.route
         ) {
-            CommunityCategories()
+            CommunityCategories(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner)
+        }
+
+        composable(
+            route = Screen.CreateCommunity.route
+        ) {
+            CreateCommunity(communityViewModel = communityViewModel)
+        }
+
+        composable(
+            route = Screen.OwnedCommunity.route
+        ) {
+            OwnedCommunity(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.Discussions.route
+        ) {
+            Discussions(postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.OwnedDiscussion.route
+        ) {
+            OwnedDiscussions(postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.CreateDiscussion.route
+        ) {
+            CreateDiscussion(postViewModel = postViewModel, navController = navController, lifecycleOwner = lifecycleOwner)
         }
     }
 }
