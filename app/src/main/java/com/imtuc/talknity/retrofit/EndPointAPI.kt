@@ -25,12 +25,29 @@ interface EndPointAPI {
         @Field("user_password") user_password: String,
     ): Response<JsonObject>
 
+    @FormUrlEncoded
+    @POST("/user-profile")
+    suspend fun getProfile(
+        @Field("user_id") user_id: String,
+    ): Response<JsonObject>
+
     @GET("/get-communitieshome")
     suspend fun getCommunityHome(): Response<JsonObject>
 
     @GET("/get-ownedcommunities/{user_id}")
     suspend fun getOwnedCommunities(
         @Path("user_id") user_id: String,
+    ): Response<JsonObject>
+
+    @GET("/get-communitiescategory/{category_id}")
+    suspend fun getCommunitiesCategory(
+        @Path("category_id") category_id: String,
+    ): Response<JsonObject>
+
+    @GET("/search-communitiescategory/{category_id}/{search_key}")
+    suspend fun searchCommunitiesCategory(
+        @Path("category_id") category_id: String,
+        @Path("search_key") search_key: String,
     ): Response<JsonObject>
 
     @GET("/get-communitycategories")

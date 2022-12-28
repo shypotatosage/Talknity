@@ -93,11 +93,15 @@ fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Lifec
                 .fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            items(1) {
+                OwnedCommunityTop(navController)
+            }
+
             itemsIndexed(items = community) { index, item ->
-                if (index == 0) {
-                    OwnedCommunityTop(navController)
-                } else {
-                    IndividualCommunity(community = item)
+                IndividualCommunity(community = item)
+
+                if (index == community.size - 1) {
+                    Spacer(modifier = Modifier.height(24.dp))
                 }
             }
         }
@@ -125,7 +129,8 @@ fun OwnedCommunityTop(navController: NavHostController) {
                     .height(28.dp)
                     .clickable {
                         navController.popBackStack()
-                    }
+                    },
+                tint = Orange500
             )
             Text(
                 text = "Back",

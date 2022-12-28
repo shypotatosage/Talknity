@@ -43,8 +43,6 @@ class CommunityViewModel @Inject constructor(
 
                     var tmpArrList = arrayListOf<Community>()
 
-                    tmpArrList.add(Community("0", "Temp", "Temp", "Temp", "Temp", "Temp", CommunityCategory("0", "All Category", "images/category/category_icon_183800.png", "FF7800", "FBB372", "F7F7F7"), User("0", "Temp", "Temp", "Temp", "Temp")))
-
                     if (!response.body()!!.get("data").isJsonNull) {
                         val arr: JsonArray = response.body()!!.getAsJsonArray("data")
 
@@ -113,6 +111,186 @@ class CommunityViewModel @Inject constructor(
                 Log.d("Get Communities Data", _ownedCommunitiesError.value.toString())
             } else {
                 Log.e("Get Communities Data",  response.raw().message)
+            }
+        }
+    }
+
+    val _categoryCommunities: MutableLiveData<List<Community>> by lazy {
+        MutableLiveData<List<Community>>()
+    }
+
+    val categoryCommunities: LiveData<List<Community>>
+        get() = _categoryCommunities
+
+    val _categoryCommunitiesError: MutableLiveData<String> by lazy {
+        MutableLiveData<String>()
+    }
+
+    val categoryCommunitiesError: LiveData<String>
+        get() = _categoryCommunitiesError
+
+    fun getCommunitiesCategory(cid: String)
+            = viewModelScope.launch {
+        repo.getCommunitiesCategory(cid).let {
+                response ->
+            if (response.isSuccessful) {
+                if (response.body()?.get("message")?.asString == "Success") {
+                    _categoryCommunitiesError.value = "Get Data Successful"
+                    _categoryCommunities.value = arrayListOf()
+
+                    var tmpArrList = arrayListOf<Community>()
+
+                    if (!response.body()!!.get("data").isJsonNull) {
+                        val arr: JsonArray = response.body()!!.getAsJsonArray("data")
+
+                        for (item in arr) {
+                            var community_id = item.asJsonObject["id"].asString
+                            var community_name = item.asJsonObject["community_name"].asString
+                            var community_description =
+                                item.asJsonObject["community_description"].asString
+                            var community_contact = item.asJsonObject["community_contact"].asString
+                            var community_logo = item.asJsonObject["community_logo"].asString
+                            var created_at = item.asJsonObject["created_at"].asString
+
+                            var user = item.asJsonObject["leader"]
+
+                            var user_id = user.asJsonObject["id"].asString
+                            var user_username = user.asJsonObject["user_username"].asString
+                            var user_displayname = user.asJsonObject["user_displayname"].asString
+                            var user_email = user.asJsonObject["user_email"].asString
+                            var user_image = user.asJsonObject["user_image"].asString
+
+                            var comcat = item.asJsonObject["category"]
+
+                            var category_id = comcat.asJsonObject["id"].asString
+                            var category_name = comcat.asJsonObject["category_name"].asString
+                            var category_logo = comcat.asJsonObject["category_logo"].asString
+                            var category_color1 = comcat.asJsonObject["category_color1"].asString
+                            var category_color2 = comcat.asJsonObject["category_color2"].asString
+                            var category_color3 = comcat.asJsonObject["category_color3"].asString
+
+                            var userModel = User(
+                                user_id,
+                                user_username,
+                                user_displayname,
+                                user_email,
+                                user_image
+                            )
+                            var categoryModel = CommunityCategory(
+                                category_id,
+                                category_name,
+                                category_logo,
+                                category_color1,
+                                category_color2,
+                                category_color3
+                            )
+
+                            var community = Community(
+                                community_id,
+                                community_name,
+                                community_description,
+                                community_contact,
+                                community_logo,
+                                created_at,
+                                categoryModel,
+                                userModel
+                            )
+
+                            tmpArrList.add(community)
+                        }
+                    }
+
+                    _categoryCommunities.value = tmpArrList
+                } else {
+                    _categoryCommunitiesError.value = response.message()
+                }
+
+                Log.d("Get Communities Based On Category Data", _categoryCommunitiesError.value.toString())
+            } else {
+                Log.e("Get Communities Based On Category Data",  response.raw().message)
+            }
+        }
+    }
+
+    fun searchCommunitiesCategory(cid: String, search_key: String)
+            = viewModelScope.launch {
+        repo.searchCommunitiesCategory(cid, search_key).let {
+                response ->
+            if (response.isSuccessful) {
+                if (response.body()?.get("message")?.asString == "Success") {
+                    _categoryCommunitiesError.value = "Get Data Successful"
+                    _categoryCommunities.value = arrayListOf()
+
+                    var tmpArrList = arrayListOf<Community>()
+
+                    if (!response.body()!!.get("data").isJsonNull) {
+                        val arr: JsonArray = response.body()!!.getAsJsonArray("data")
+
+                        for (item in arr) {
+                            var community_id = item.asJsonObject["id"].asString
+                            var community_name = item.asJsonObject["community_name"].asString
+                            var community_description =
+                                item.asJsonObject["community_description"].asString
+                            var community_contact = item.asJsonObject["community_contact"].asString
+                            var community_logo = item.asJsonObject["community_logo"].asString
+                            var created_at = item.asJsonObject["created_at"].asString
+
+                            var user = item.asJsonObject["leader"]
+
+                            var user_id = user.asJsonObject["id"].asString
+                            var user_username = user.asJsonObject["user_username"].asString
+                            var user_displayname = user.asJsonObject["user_displayname"].asString
+                            var user_email = user.asJsonObject["user_email"].asString
+                            var user_image = user.asJsonObject["user_image"].asString
+
+                            var comcat = item.asJsonObject["category"]
+
+                            var category_id = comcat.asJsonObject["id"].asString
+                            var category_name = comcat.asJsonObject["category_name"].asString
+                            var category_logo = comcat.asJsonObject["category_logo"].asString
+                            var category_color1 = comcat.asJsonObject["category_color1"].asString
+                            var category_color2 = comcat.asJsonObject["category_color2"].asString
+                            var category_color3 = comcat.asJsonObject["category_color3"].asString
+
+                            var userModel = User(
+                                user_id,
+                                user_username,
+                                user_displayname,
+                                user_email,
+                                user_image
+                            )
+                            var categoryModel = CommunityCategory(
+                                category_id,
+                                category_name,
+                                category_logo,
+                                category_color1,
+                                category_color2,
+                                category_color3
+                            )
+
+                            var community = Community(
+                                community_id,
+                                community_name,
+                                community_description,
+                                community_contact,
+                                community_logo,
+                                created_at,
+                                categoryModel,
+                                userModel
+                            )
+
+                            tmpArrList.add(community)
+                        }
+                    }
+
+                    _categoryCommunities.value = tmpArrList
+                } else {
+                    _categoryCommunitiesError.value = response.message()
+                }
+
+                Log.d("Search Communities Based On Category Data", _categoryCommunitiesError.value.toString())
+            } else {
+                Log.e("Search Communities Based On Category Data",  response.raw().message)
             }
         }
     }

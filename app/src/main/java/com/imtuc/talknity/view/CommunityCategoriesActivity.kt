@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -69,7 +70,11 @@ class CommunityCategoriesActivity : ComponentActivity() {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun CommunityCategories(communityViewModel: CommunityViewModel, lifecycleOwner: LifecycleOwner) {
+fun CommunityCategories(
+    communityViewModel: CommunityViewModel,
+    lifecycleOwner: LifecycleOwner,
+    navController: NavHostController
+) {
     var search = remember {
         mutableStateOf("")
     }
@@ -82,15 +87,15 @@ fun CommunityCategories(communityViewModel: CommunityViewModel, lifecycleOwner: 
 
     communityViewModel.getCategory()
 
-    communityViewModel.category.observe(lifecycleOwner, Observer {
-            response ->
+    communityViewModel.category.observe(lifecycleOwner, Observer { response ->
         if (communityViewModel.categoryError.value == "Get Data Successful") {
             category.clear()
             category.addAll(communityViewModel.category.value!!)
 
             Log.e("Categories", category.toString())
         } else {
-            Toast.makeText(context, communityViewModel.categoryError.value, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, communityViewModel.categoryError.value, Toast.LENGTH_SHORT)
+                .show()
         }
     })
 
@@ -110,128 +115,122 @@ fun CommunityCategories(communityViewModel: CommunityViewModel, lifecycleOwner: 
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                var i = 0
-
                 items(1) {
-                    if (i == 0) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                    ) {
                         Column(
                             modifier = Modifier
-                                .fillMaxSize()
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .statusBarsPadding()
-                                    .navigationBarsWithImePadding()
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .navigationBarsWithImePadding()
 //                                    .verticalScroll(rememberScrollState())
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(20.dp, 24.dp, 0.dp, 0.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(20.dp, 24.dp, 0.dp, 0.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = "Community Category",
-                                        fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                                        fontSize = 28.sp,
-                                        color = SoftBlack
-                                    )
-                                }
-                                Surface(
-                                    modifier = Modifier
-                                        .padding(20.dp, 20.dp),
-                                    shadowElevation = 4.dp,
-                                    border = BorderStroke(
-                                        width = 0.4.dp,
-                                        color = GrayBorder
-                                    ),
-                                    shape = RoundedCornerShape(25.dp)
-                                ) {
-                                    BasicTextField(
-                                        value = search.value,
-                                        onValueChange = {
-                                            search.value = it
+                                Text(
+                                    text = "Community Category",
+                                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                                    fontSize = 28.sp,
+                                    color = SoftBlack
+                                )
+                            }
+                            Surface(
+                                modifier = Modifier
+                                    .padding(20.dp, 20.dp),
+                                shadowElevation = 4.dp,
+                                border = BorderStroke(
+                                    width = 0.4.dp,
+                                    color = GrayBorder
+                                ),
+                                shape = RoundedCornerShape(25.dp)
+                            ) {
+                                BasicTextField(
+                                    value = search.value,
+                                    onValueChange = {
+                                        search.value = it
 
-                                            if (it.trim().isNotEmpty()) {
-                                                communityViewModel.searchCategory(it)
-                                            } else {
-                                                communityViewModel.getCategory()
-                                            }
-                                        },
-                                        enabled = true,
-                                        singleLine = true,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .navigationBarsWithImePadding(),
-                                        decorationBox = { innerTextField ->
-                                            TextFieldDefaults.textFieldColors(
-                                                backgroundColor = Color.Transparent,
-                                                focusedIndicatorColor = Color.Transparent,
-                                                unfocusedIndicatorColor = Color.Transparent,
-                                                disabledIndicatorColor = Color.Transparent,
-                                                textColor = SoftBlack
-                                            )
-                                            Box(
-                                                modifier = Modifier
-                                                    .padding(16.dp, 4.dp)
-                                            ) {
-                                                if (search.value.isEmpty()) {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        Text(
-                                                            text = "Search",
-                                                            color = Gray300,
-                                                            fontSize = 16.sp,
-                                                            fontFamily = FontFamily(Font(R.font.opensans_regular))
-                                                        )
-                                                        Icon(
-                                                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                                                            contentDescription = "Search",
-                                                            modifier = Modifier
-                                                                .height(32.dp)
-                                                        )
-                                                    }
-
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        if (it.trim().isNotEmpty()) {
+                                            communityViewModel.searchCategory(it)
+                                        } else {
+                                            communityViewModel.getCategory()
+                                        }
+                                    },
+                                    enabled = true,
+                                    singleLine = true,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .navigationBarsWithImePadding(),
+                                    decorationBox = { innerTextField ->
+                                        TextFieldDefaults.textFieldColors(
+                                            backgroundColor = Color.Transparent,
+                                            focusedIndicatorColor = Color.Transparent,
+                                            unfocusedIndicatorColor = Color.Transparent,
+                                            disabledIndicatorColor = Color.Transparent,
+                                            textColor = SoftBlack
+                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .padding(16.dp, 4.dp)
+                                        ) {
+                                            if (search.value.isEmpty()) {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = "Search",
+                                                        color = Gray300,
+                                                        fontSize = 16.sp,
+                                                        fontFamily = FontFamily(Font(R.font.opensans_regular))
+                                                    )
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                                                        contentDescription = "Search",
                                                         modifier = Modifier
-                                                            .fillMaxWidth()
-                                                            .padding(0.dp, 5.dp),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        innerTextField()
-                                                    }
-                                                } else {
-                                                    Row(
-                                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                                        modifier = Modifier.fillMaxWidth(),
-                                                        verticalAlignment = Alignment.CenterVertically
-                                                    ) {
-                                                        innerTextField()
-                                                        Image(
-                                                            painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                                                            contentDescription = "Search",
-                                                            modifier = Modifier
-                                                                .height(32.dp)
-                                                        )
-                                                    }
+                                                            .height(32.dp)
+                                                    )
+                                                }
+
+                                                Row(
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier
+                                                        .fillMaxWidth()
+                                                        .padding(0.dp, 5.dp),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    innerTextField()
+                                                }
+                                            } else {
+                                                Row(
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    innerTextField()
+                                                    Image(
+                                                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                                                        contentDescription = "Search",
+                                                        modifier = Modifier
+                                                            .height(32.dp)
+                                                    )
                                                 }
                                             }
-                                        },
-                                        textStyle = TextStyle(
-                                            fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                                            fontSize = 16.sp
-                                        )
+                                        }
+                                    },
+                                    textStyle = TextStyle(
+                                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                                        fontSize = 16.sp
                                     )
-                                }
+                                )
                             }
                         }
                     }
-
-                    i++
                 }
 
                 gridItems(
@@ -240,22 +239,10 @@ fun CommunityCategories(communityViewModel: CommunityViewModel, lifecycleOwner: 
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(16.dp, 0.dp)
                 ) { item ->
-                    CommunityCategoryCard(item)
+                    CommunityCategoryCard(item, navController = navController)
                 }
             }
         }
-    }
-
-    ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
-
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CommunityCategoriesPreview() {
-    TalknityTheme {
-//        CommunityCategories()
     }
 }
 

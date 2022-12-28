@@ -3,8 +3,10 @@ package com.imtuc.talknity.navigation
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.imtuc.talknity.view.*
 import com.imtuc.talknity.viewmodel.AuthViewModel
 import com.imtuc.talknity.viewmodel.CommunityViewModel
@@ -22,7 +24,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.OwnedDiscussion.route
+        startDestination = Screen.CommunityCategory.route
     ) {
         composable(
             route = Screen.Splash.route
@@ -57,7 +59,21 @@ fun SetupNavGraph(
         composable(
             route = Screen.CommunityCategory.route
         ) {
-            CommunityCategories(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner)
+            CommunityCategories(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.SelectedCommunityCategory.route,
+            arguments = listOf(
+                navArgument("category_id") {
+                    type = NavType.StringType
+                },
+                navArgument("category_name") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            SelectedCategoryCommunityList(category_id = it.arguments?.getString("category_id").toString(), category_name = it.arguments?.getString("category_name").toString(), communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(

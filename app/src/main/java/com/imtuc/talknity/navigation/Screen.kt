@@ -7,7 +7,14 @@ sealed class Screen(val route: String) {
     object Register:Screen(route = "register_screen")
     object Community:Screen(route = "community_screen")
     object CommunityCategory:Screen(route = "community_category_screen")
-    object SelectedCommunityCategory:Screen(route = "selected_community_category_screen")
+    object SelectedCommunityCategory:Screen(route = "selected_community_category_screen/{category_id}/{category_name}") {
+        fun passParam(
+            id: String,
+            name: String
+        ): String {
+            return "selected_community_category_screen/$id/$name"
+        }
+    }
     object CommunityDetail:Screen(route = "community_detail_screen")
     object CreateCommunity:Screen(route = "create_community_screen")
     object OwnedCommunity:Screen(route = "owned_community_screen")

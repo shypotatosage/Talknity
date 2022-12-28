@@ -52,8 +52,6 @@ class PostViewModel @Inject constructor(
 
                     var tmpArrList = arrayListOf<Post>()
 
-                    tmpArrList.add(Post("0", "Temp", "Temp", "Temp", true, "Temp", User("0", "Temp", "Temp", "Temp", "Temp")))
-
                     if (!response.body()!!.get("data").isJsonNull) {
                         val arr: JsonArray = response.body()!!.getAsJsonArray("data")
 
@@ -134,8 +132,6 @@ class PostViewModel @Inject constructor(
 
                     var tmpArrList = arrayListOf<Post>()
 
-                    tmpArrList.add(Post("0", "Temp", "Temp", "Temp", true, "Temp", User("0", "Temp", "Temp", "Temp", "Temp")))
-
                     if (!response.body()!!.get("data").isJsonNull) {
                         val arr: JsonArray = response.body()!!.getAsJsonArray("data")
 
@@ -201,8 +197,6 @@ class PostViewModel @Inject constructor(
                     _posts.value = arrayListOf()
 
                     var tmpArrList = arrayListOf<Post>()
-
-                    tmpArrList.add(Post("0", "Temp", "Temp", "Temp", true, "Temp", User("0", "Temp", "Temp", "Temp", "Temp")))
 
                     if (!response.body()!!.get("data").isJsonNull) {
                         val arr: JsonArray = response.body()!!.getAsJsonArray("data")

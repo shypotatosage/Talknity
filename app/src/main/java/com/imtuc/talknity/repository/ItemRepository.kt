@@ -15,6 +15,12 @@ class ItemRepository@Inject constructor(
     suspend fun getOwnedCommunities(uid: String)
             = api.getOwnedCommunities(uid)
 
+    suspend fun getCommunitiesCategory(cid: String)
+            = api.getCommunitiesCategory(cid)
+
+    suspend fun searchCommunitiesCategory(cid: String, search_key: String)
+            = api.searchCommunitiesCategory(cid, search_key)
+
     suspend fun getCommunityCategories()
             = api.getCommunityCategories()
 
