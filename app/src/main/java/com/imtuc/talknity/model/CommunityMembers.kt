@@ -1,6 +1,6 @@
 package com.imtuc.talknity.model
 
-data class Community(
+data class CommunityMembers(
     var community_id: String,
     var community_name: String,
     var community_description: String,
@@ -9,6 +9,7 @@ data class Community(
     var created_at: String,
     var community_category: CommunityCategory,
     var leader: User,
-    var member_count: String
+    var member_count: String,
+    var members: ArrayList<CommunityMember>
 ) {
 }

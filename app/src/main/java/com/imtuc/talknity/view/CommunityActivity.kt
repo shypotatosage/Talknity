@@ -7,12 +7,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.paint
@@ -28,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.imtuc.talknity.R
+import com.imtuc.talknity.navigation.BottomNavScreen
+import com.imtuc.talknity.navigation.CustomBottomNavigation
 import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.GreyishWhite
 import com.imtuc.talknity.view.ui.theme.Orange500
@@ -51,120 +51,136 @@ class CommunityActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EnterCommunity(navController: NavController) {
-    Column(modifier = Modifier
-        .paint(
-            painter = painterResource(id = R.drawable.bg1),
-            contentScale = ContentScale.Crop
-        )
-        .fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.community1pageimage),
-            contentDescription = "Community Corner",
-            modifier = Modifier
-                .height(250.dp)
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = "Community ",
-                fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                fontSize = 30.sp,
-                color = Orange500,
-                modifier = Modifier
-                    .padding(0.dp, 30.dp, 0.dp, 10.dp)
-            )
-            Text(
-                text = "Corner",
-                fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
-                fontSize = 30.sp,
-                color = SoftBlack,
-                modifier = Modifier
-                    .padding(0.dp, 30.dp, 0.dp, 10.dp)
-            )
+    val currentScreen = remember {
+        mutableStateOf<BottomNavScreen>(BottomNavScreen.Community)
+    }
+
+    Scaffold(
+        bottomBar = {
+            CustomBottomNavigation(currentScreenRoute = currentScreen.value.route) {
+                navController.popBackStack()
+                navController.navigate(it.route)
+            }
         }
-        Row(
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth(1f)
-                .padding(0.dp, 16.dp, 0.dp, 0.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
+                .paint(
+                    painter = painterResource(id = R.drawable.bg1),
+                    contentScale = ContentScale.Crop
+                )
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Button(
+            Image(
+                painter = painterResource(id = R.drawable.community1pageimage),
+                contentDescription = "Community Corner",
                 modifier = Modifier
-                    .fillMaxWidth(0.375f)
-                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                contentPadding = PaddingValues(),
-                shape = RoundedCornerShape(16.dp),
-                onClick = {
-                          navController.navigate(Screen.CommunityCategory.route)
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Orange500),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                    .height(250.dp)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                Column(
+                Text(
+                    text = "Community ",
+                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                    fontSize = 30.sp,
+                    color = Orange500,
                     modifier = Modifier
-                        .padding(0.dp, 32.dp, 0.dp, 0.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .padding(0.dp, 30.dp, 0.dp, 10.dp)
+                )
+                Text(
+                    text = "Corner",
+                    fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
+                    fontSize = 30.sp,
+                    color = SoftBlack,
+                    modifier = Modifier
+                        .padding(0.dp, 30.dp, 0.dp, 10.dp)
+                )
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(1f)
+                    .padding(0.dp, 16.dp, 0.dp, 0.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth(0.375f)
+                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                    contentPadding = PaddingValues(),
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = {
+                        navController.navigate(Screen.CommunityCategory.route)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Orange500),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
                 ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.findcommunity),
-                        contentDescription = "Back",
+                    Column(
                         modifier = Modifier
-                            .height(80.dp)
-                    )
-                    Text(
-                        text = "Find Community",
-                        fontFamily = FontFamily(Font(R.font.opensans_bold)),
-                        fontSize = 20.sp,
-                        color = GreyishWhite,
+                            .padding(0.dp, 32.dp, 0.dp, 0.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.findcommunity),
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .height(80.dp)
+                        )
+                        Text(
+                            text = "Find Community",
+                            fontFamily = FontFamily(Font(R.font.opensans_bold)),
+                            fontSize = 20.sp,
+                            color = GreyishWhite,
+                            modifier = Modifier
+                                .padding(12.dp, 16.dp, 12.dp, 24.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth(0.625f)
+                        .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
+                    contentPadding = PaddingValues(),
+                    shape = RoundedCornerShape(16.dp),
+                    onClick = {
+                        navController.navigate(Screen.CreateCommunity.route)
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.White),
+                    elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
+                ) {
+                    Column(
                         modifier = Modifier
-                            .padding(12.dp, 16.dp, 12.dp, 24.dp),
-                        textAlign = TextAlign.Center
-                    )
+                            .padding(0.dp, 32.dp, 0.dp, 0.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.ownedcommunity),
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .height(80.dp)
+                        )
+                        Text(
+                            text = "Create Community",
+                            fontFamily = FontFamily(Font(R.font.opensans_bold)),
+                            fontSize = 20.sp,
+                            color = Orange500,
+                            modifier = Modifier
+                                .padding(12.dp, 16.dp, 12.dp, 24.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth(0.625f)
-                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp),
-                contentPadding = PaddingValues(),
-                shape = RoundedCornerShape(16.dp),
-                onClick = {
-                          navController.navigate(Screen.CreateCommunity.route)
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 8.dp)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(0.dp, 32.dp, 0.dp, 0.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ownedcommunity),
-                        contentDescription = "Back",
-                        modifier = Modifier
-                            .height(80.dp)
-                    )
-                    Text(
-                        text = "Create Community",
-                        fontFamily = FontFamily(Font(R.font.opensans_bold)),
-                        fontSize = 20.sp,
-                        color = Orange500,
-                        modifier = Modifier
-                            .padding(12.dp, 16.dp, 12.dp, 24.dp),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
+            Spacer(modifier = Modifier.height(72.dp))
         }
     }
 }

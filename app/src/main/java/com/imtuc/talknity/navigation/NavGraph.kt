@@ -24,7 +24,7 @@ fun SetupNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.CommunityCategory.route
+        startDestination = Screen.Splash.route
     ) {
         composable(
             route = Screen.Splash.route
@@ -33,9 +33,9 @@ fun SetupNavGraph(
         }
 
         composable(
-            route = Screen.Home.route
+            route = BottomNavScreen.Home.route
         ) {
-            HomeScreen(homeViewModel = homeViewModel, lifecycleOwner = lifecycleOwner)
+            HomeScreen(homeViewModel = homeViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(
@@ -51,7 +51,7 @@ fun SetupNavGraph(
         }
 
         composable(
-            route = Screen.Community.route
+            route = BottomNavScreen.Community.route
         ) {
             EnterCommunity(navController = navController)
         }
@@ -77,9 +77,47 @@ fun SetupNavGraph(
         }
 
         composable(
+            route = Screen.CommunityDetail.route,
+            arguments = listOf(
+                navArgument("community_id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            CommunityDetail(community_id = it.arguments?.getString("community_id").toString(), communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
             route = Screen.CreateCommunity.route
         ) {
-            CreateCommunity(communityViewModel = communityViewModel)
+            CreateCommunity(communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.EditCommunity.route,
+            arguments = listOf(
+                navArgument("community_id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            EditCommunity(
+                community_id = it.arguments?.getString("community_id").toString(),
+                communityViewModel = communityViewModel,
+                lifecycleOwner = lifecycleOwner,
+                navController = navController
+            )
+        }
+
+        composable(
+            route = Screen.EditDiscussion.route,
+            arguments = listOf(
+                navArgument("post_id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            EditDiscussion(post_id = it.arguments?.getString("post_id").toString(), postViewModel = postViewModel, navController = navController, lifecycleOwner = lifecycleOwner)
         }
 
         composable(
@@ -89,9 +127,20 @@ fun SetupNavGraph(
         }
 
         composable(
-            route = Screen.Discussions.route
+            route = BottomNavScreen.Discussions.route
         ) {
             Discussions(postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
+        }
+
+        composable(
+            route = Screen.IndividualDiscussion.route,
+            arguments = listOf(
+                navArgument("post_id") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            IndividualDiscussion(post_id = it.arguments?.getString("post_id").toString(), postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
         }
 
         composable(
@@ -104,6 +153,40 @@ fun SetupNavGraph(
             route = Screen.CreateDiscussion.route
         ) {
             CreateDiscussion(postViewModel = postViewModel, navController = navController, lifecycleOwner = lifecycleOwner)
+        }
+
+        composable(
+            route = BottomNavScreen.Profile.route
+        ) {
+            Profile(authViewModel = authViewModel, navController = navController, lifecycleOwner = lifecycleOwner)
+        }
+
+        composable(
+            route = Screen.EditProfile.route,
+            arguments = listOf(
+                navArgument("user_displayname") {
+                    type = NavType.StringType
+                },
+                navArgument("user_username") {
+                    type = NavType.StringType
+                },
+                navArgument("user_email") {
+                    type = NavType.StringType
+                },
+                navArgument("user_image") {
+                    type = NavType.StringType
+                }
+            )
+        ) {
+            EditProfile(
+                authViewModel = authViewModel,
+                user_displayname = it.arguments?.getString("user_displayname").toString(),
+                user_username = it.arguments?.getString("user_username").toString(),
+                user_email = it.arguments?.getString("user_email").toString(),
+                user_image = it.arguments?.getString("user_image").toString(),
+                navController = navController,
+                lifecycleOwner = lifecycleOwner
+            )
         }
     }
 }

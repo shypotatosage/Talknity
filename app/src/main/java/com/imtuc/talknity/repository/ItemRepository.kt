@@ -15,6 +15,9 @@ class ItemRepository@Inject constructor(
     suspend fun getOwnedCommunities(uid: String)
             = api.getOwnedCommunities(uid)
 
+    suspend fun getCommunityMembers(community_id: String)
+            = api.getCommunityMembers(community_id)
+
     suspend fun getCommunitiesCategory(cid: String)
             = api.getCommunitiesCategory(cid)
 
@@ -30,25 +33,17 @@ class ItemRepository@Inject constructor(
     suspend fun getPostHome()
             = api.getPostHome()
 
-    suspend fun getPost()
-            = api.getPost()
+    suspend fun getPosts()
+            = api.getPosts()
+
+    suspend fun getPost(post_id: String)
+            = api.getPost(post_id)
 
     suspend fun getOwnedPosts(uid: String)
             = api.getOwnedPosts(uid)
 
     suspend fun searchPosts(key: String)
             = api.searchPosts(key)
-
-    suspend fun createCommunity(
-        desc: RequestBody,
-        community_logo: MultipartBody.Part?,
-        community_name: String,
-        community_description: String,
-        community_contact: String,
-        category_id: String,
-        leader_id: String
-    )
-            = api.createCommunity(desc, community_logo, community_name, community_description, community_contact, category_id, leader_id)
 
     suspend fun createPost(
         post_title: String,
@@ -57,5 +52,39 @@ class ItemRepository@Inject constructor(
         uid: String
     )
             = api.createPost(post_title, post_content, anonymous, uid)
+
+    suspend fun createComment(
+        comment_content: String,
+        post_id: String,
+        user_id: String
+    )
+            = api.createComment(comment_content, post_id, user_id)
+
+    suspend fun removeMember(
+        community_member_id: String
+    )
+            = api.removeMember(community_member_id)
+
+    suspend fun signoutCommunity(
+        community_id: String,
+        user_id: String
+    )
+            = api.signoutCommunity(community_id, user_id)
+
+    suspend fun joinCommunity(
+        community_id: String,
+        user_id: String
+    )
+            = api.joinCommunity(community_id, user_id)
+
+    suspend fun deletePost(
+        post_id: String
+    )
+            = api.deletePost(post_id)
+
+    suspend fun deleteCommunity(
+        community_id: String
+    )
+            = api.deleteCommunity(community_id)
 
 }

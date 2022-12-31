@@ -46,10 +46,12 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
+import com.imtuc.talknity.helper.Const
 import com.imtuc.talknity.view.ui.theme.*
 import com.imtuc.talknity.viewmodel.PostViewModel
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -61,34 +63,22 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 
-class CreateDiscussionActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            TalknityTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-//                    CreateDiscussion()
-                }
-            }
-        }
-    }
-}
-
 @Composable
-fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostController, lifecycleOwner: LifecycleOwner) {
+fun EditDiscussion(
+    post_id: String,
+    postViewModel: PostViewModel,
+    navController: NavHostController,
+    lifecycleOwner: LifecycleOwner
+) {
     val launcherPermission = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
             // Permission Accepted: Do something
-            Log.d("ExampleScreen","PERMISSION GRANTED")
+            Log.d("ExampleScreen", "PERMISSION GRANTED")
         } else {
             // Permission Denied: Do something
-            Log.d("ExampleScreen","PERMISSION DENIED")
+            Log.d("ExampleScreen", "PERMISSION DENIED")
         }
     }
 
@@ -97,6 +87,10 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
     }
 
     var postContent = remember {
+        mutableStateOf("")
+    }
+
+    var postImage = remember {
         mutableStateOf("")
     }
 
@@ -114,9 +108,10 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
         mutableStateOf<Bitmap?>(null)
     }
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-    }
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            imageUri = uri
+        }
 
     imageUri?.let {
         if (Build.VERSION.SDK_INT < 28) {
@@ -128,21 +123,28 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
         }
     }
 
-    var titleRequired = remember {
-        mutableStateOf(false)
-    }
+    postViewModel.getPostUpdate(post_id)
 
-    var contentRequired = remember {
-        mutableStateOf(false)
-    }
-
-    postViewModel.postcreate.observe(lifecycleOwner, Observer { response ->
+    postViewModel.getPostUpdateError.observe(lifecycleOwner, Observer { response ->
         if (response != "") {
-            if (response == "Discussion Successfully Created") {
-                postViewModel.resetPostCreate()
-                navController.popBackStack()
+            if (response == "Success") {
+                postTitle.value = postViewModel.getPostUpdate.value!!.post_title
+                postContent.value = postViewModel.getPostUpdate.value!!.post_content
+                postImage.value = postViewModel.getPostUpdate.value!!.post_image
+                anonymousChecked.value = postViewModel.getPostUpdate.value!!.anonymous
             } else {
                 Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+            }
+        }
+    })
+
+    postViewModel.postUpdate.observe(lifecycleOwner, Observer { response ->
+        if (response != "") {
+            Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+
+            if (response == "Discussion Successfully Updated") {
+                postViewModel.resetPostUpdate()
+                navController.popBackStack()
             }
         }
     })
@@ -186,7 +188,7 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Create A ",
+                    text = "Update ",
                     fontFamily = FontFamily(Font(com.imtuc.talknity.R.font.robotoslab_bold)),
                     fontSize = 30.sp,
                     color = SoftBlack
@@ -200,76 +202,136 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
             }
 
             if (bitmap.value == null) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 24.dp, 0.dp, 0.dp)
-                ) {
-                    Surface(
+                if (postImage.value == "") {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
-                            .size(200.dp, 160.dp)
-                            .background(color = Color.White)
-                            .align(alignment = Alignment.CenterVertically)
-                            .border(
-                                width = 0.6.dp,
-                                color = GrayBorder,
-                                shape = RoundedCornerShape(16.dp)
-                            ),
-                        shape = RoundedCornerShape(16.dp),
-                        color = GreyishWhite,
-                        shadowElevation = 5.dp
+                            .fillMaxWidth()
+                            .padding(0.dp, 24.dp, 0.dp, 0.dp)
                     ) {
-                        Column(
+                        Surface(
                             modifier = Modifier
-                                .fillMaxSize()
+                                .size(200.dp, 160.dp)
                                 .background(color = Color.White)
-                                .clickable {
-                                    when (PackageManager.PERMISSION_GRANTED) {
-                                        ContextCompat.checkSelfPermission(
-                                            context,
-                                            Manifest.permission.READ_EXTERNAL_STORAGE
-                                        ) -> {
-                                            Log.d("ExampleScreen", "Code requires permission")
+                                .align(alignment = Alignment.CenterVertically)
+                                .border(
+                                    width = 0.6.dp,
+                                    color = GrayBorder,
+                                    shape = RoundedCornerShape(16.dp)
+                                ),
+                            shape = RoundedCornerShape(16.dp),
+                            color = GreyishWhite,
+                            shadowElevation = 5.dp
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(color = Color.White)
+                                    .clickable {
+                                        when (PackageManager.PERMISSION_GRANTED) {
+                                            ContextCompat.checkSelfPermission(
+                                                context,
+                                                Manifest.permission.READ_EXTERNAL_STORAGE
+                                            ) -> {
+                                                Log.d("ExampleScreen", "Code requires permission")
+                                            }
+                                            else -> {
+                                                // Asking for permission
+                                                launcherPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                            }
                                         }
-                                        else -> {
-                                            // Asking for permission
-                                            launcherPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
-                                        }
-                                    }
 
-                                    when (PackageManager.PERMISSION_GRANTED) {
-                                        ContextCompat.checkSelfPermission(
-                                            context,
-                                            Manifest.permission.WRITE_EXTERNAL_STORAGE
-                                        ) -> {
-                                            // Some works that require permission
-                                            launcher.launch("image/*")
-                                            Log.d("ExampleScreen", "Code requires permission")
+                                        when (PackageManager.PERMISSION_GRANTED) {
+                                            ContextCompat.checkSelfPermission(
+                                                context,
+                                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                            ) -> {
+                                                // Some works that require permission
+                                                launcher.launch("image/*")
+                                                Log.d("ExampleScreen", "Code requires permission")
+                                            }
+                                            else -> {
+                                                // Asking for permission
+                                                launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                            }
                                         }
-                                        else -> {
-                                            // Asking for permission
-                                            launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                        }
-                                    }
-                                },
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                    },
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Image(
+                                    painter = painterResource(id = com.imtuc.talknity.R.drawable.addimageicon),
+                                    contentDescription = "Add Image",
+                                    modifier = Modifier
+                                        .height(20.dp)
+                                )
+                                Text(
+                                    text = "Add An Image",
+                                    fontFamily = FontFamily(Font(com.imtuc.talknity.R.font.opensans_regular)),
+                                    color = Gray300,
+                                    fontSize = 16.sp,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier
+                                        .padding(8.dp, 8.dp, 8.dp, 0.dp)
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 24.dp, 0.dp, 0.dp)
+                    ) {
+                        Surface(
+                            modifier = Modifier
+                                .size(160.dp, 160.dp)
+                                .background(color = GreyishWhite)
+                                .align(alignment = Alignment.CenterVertically)
+                                .border(
+                                    width = 0.6.dp,
+                                    color = GrayBorder,
+                                    shape = RoundedCornerShape(16.dp)
+                                ),
+                            shape = RoundedCornerShape(16.dp),
+                            color = GreyishWhite
                         ) {
                             Image(
-                                painter = painterResource(id = com.imtuc.talknity.R.drawable.addimageicon),
+                                painter = rememberAsyncImagePainter(Const.BASE_URL + "/" + postImage.value),
                                 contentDescription = "Add Image",
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .height(20.dp)
-                            )
-                            Text(
-                                text = "Add An Image",
-                                fontFamily = FontFamily(Font(com.imtuc.talknity.R.font.opensans_regular)),
-                                color = Gray300,
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(8.dp, 8.dp, 8.dp, 0.dp)
+                                    .fillMaxSize()
+                                    .clickable {
+                                        when (PackageManager.PERMISSION_GRANTED) {
+                                            ContextCompat.checkSelfPermission(
+                                                context,
+                                                Manifest.permission.READ_EXTERNAL_STORAGE
+                                            ) -> {
+                                                Log.d("ExampleScreen", "Code requires permission")
+                                            }
+                                            else -> {
+                                                // Asking for permission
+                                                launcherPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                            }
+                                        }
+
+                                        when (PackageManager.PERMISSION_GRANTED) {
+                                            ContextCompat.checkSelfPermission(
+                                                context,
+                                                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                            ) -> {
+                                                // Some works that require permission
+                                                launcher.launch("image/*")
+                                                Log.d("ExampleScreen", "Code requires permission")
+                                            }
+                                            else -> {
+                                                // Asking for permission
+                                                launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                            }
+                                        }
+                                    }
                             )
                         }
                     }
@@ -298,7 +360,8 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                             bitmap = bitmap.value!!.asImageBitmap(),
                             contentDescription = "Add Image",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .clickable {
                                     when (PackageManager.PERMISSION_GRANTED) {
                                         ContextCompat.checkSelfPermission(
@@ -401,14 +464,14 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                         )
                     )
                 }
-                if (titleRequired.value && postTitle.value.trim() == "") {
+                if (postTitle.value.trim().length > 100 || postTitle.value.trim() == "") {
                     Text(
                         text =
                         if (postTitle.value.trim().length <= 100) {
                             "Post Title is required"
                         } else {
-                               "Max. 100 characters"
-                               },
+                            "Max. 100 characters"
+                        },
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
                         fontSize = 13.sp,
                         color = Red500,
@@ -480,14 +543,14 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                         )
                     )
                 }
-                if (contentRequired.value && postContent.value.trim() == "") {
+                if (postContent.value.trim().length < 25) {
                     Text(
                         text =
                         if (postContent.value.trim().isEmpty()) {
                             "Post Content is required"
                         } else {
-                               "Min. 25 characters"
-                               },
+                            "Min. 25 characters"
+                        },
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
                         fontSize = 13.sp,
                         color = Red500,
@@ -503,7 +566,10 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                         modifier = Modifier.background(Color.White),
                         elevation = 0.dp,
                         shape = RoundedCornerShape(6.dp),
-                        border = BorderStroke(1.25.dp, color = if (anonymousChecked.value) Orange500 else  Gray300)
+                        border = BorderStroke(
+                            1.25.dp,
+                            color = if (anonymousChecked.value) Orange500 else Gray300
+                        )
                     ) {
                         Box(
                             modifier = Modifier
@@ -514,8 +580,12 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                                 },
                             contentAlignment = Alignment.Center
                         ) {
-                            if(anonymousChecked.value)
-                                Icon(Icons.Default.Check, contentDescription = "", tint = Color.White)
+                            if (anonymousChecked.value)
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "",
+                                    tint = Color.White
+                                )
                         }
                     }
 
@@ -540,51 +610,44 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                             .padding(0.dp, 48.dp, 0.dp, 0.dp)
                     )
 
-                    Row(horizontalArrangement = Arrangement.Center,
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding()) {
-                        Button(onClick = {
-                            if (postTitle.value.trim().length > 100 || postTitle.value.trim().isEmpty()) {
-                                titleRequired.value = true
-                            } else {
-                                titleRequired.value = false
-                            }
+                            .padding()
+                    ) {
+                        Button(
+                            onClick = {
+                                if (!(postContent.value.trim().length < 25 || postTitle.value.trim() == "" || postTitle.value.trim().length > 100)) {
+                                    if (bitmap.value != null) {
+                                        var post_image =
+                                            prepareFilePart("post_image", bitmap.value!!)
 
-                            if (postContent.value.trim().length < 25) {
-                                contentRequired.value = true
-                            } else {
-                                contentRequired.value = false
-                            }
-
-                            if (!(titleRequired.value || contentRequired.value)) {
-                                var post_image: MultipartBody.Part?
-
-                                if (bitmap.value != null) {
-                                    post_image = prepareFilePart("post_image", bitmap.value!!)
-                                } else {
-                                    post_image = null
+                                        postViewModel.updatePost(
+                                            post_image,
+                                            postTitle.value.trim().toRequestBody(),
+                                            postContent.value.trim().toRequestBody(),
+                                            anonymousChecked.value,
+                                            post_id.toRequestBody()
+                                        )
+                                    } else {
+                                        postViewModel.updatePost(
+                                            null,
+                                            postTitle.value.trim().toRequestBody(),
+                                            postContent.value.trim().toRequestBody(),
+                                            anonymousChecked.value,
+                                            post_id.toRequestBody()
+                                        )
+                                    }
                                 }
-
-                                val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
-
-                                if (preferences.getInt("user_id", -1).toString() != "-1") {
-                                    postViewModel.createPostImage(
-                                        post_image,
-                                        postTitle.value.trim().toRequestBody(),
-                                        postContent.value.trim().toRequestBody(),
-                                        anonymousChecked.value,
-                                        preferences.getInt("user_id", -1).toString().toRequestBody()
-                                    )
-                                }
-                            }
-                                         },
+                            },
                             modifier = Modifier
                                 .padding(8.dp, 0.dp),
                             shape = RoundedCornerShape(50.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)) {
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)
+                        ) {
                             Text(
-                                text = "Post Discussion",
+                                text = "Update Discussion",
                                 fontSize = 20.sp,
                                 fontFamily = FontFamily(Font(com.imtuc.talknity.R.font.opensans_bold)),
                                 color = GreyishWhite
@@ -595,40 +658,4 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
             }
         }
     }
-}
-
-fun prepareFilePart(partName: String, img: Bitmap): MultipartBody.Part {
-    // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
-    // use the FileUtils to get the actual file by uri
-    val file = savebitmap(img)
-
-    // create RequestBody instance from file
-    val requestFile: RequestBody = file!!.asRequestBody("image/*".toMediaTypeOrNull())
-
-    // MultipartBody.Part is used to send also the actual file name
-    return MultipartBody.Part.createFormData(partName, file.name, requestFile)
-}
-
-fun savebitmap(bmp: Bitmap): File? {
-    val extStorageDirectory = Environment.getExternalStorageDirectory().toString()
-    var outStream: OutputStream?
-
-    var file = File(extStorageDirectory, "temp.png")
-
-    if (file.exists()) {
-        file.delete()
-        file = File(extStorageDirectory, "temp.png")
-    }
-
-    try {
-        outStream = FileOutputStream(file)
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, outStream)
-        outStream.flush()
-        outStream.close()
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return null
-    }
-
-    return file
 }
