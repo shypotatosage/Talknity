@@ -39,6 +39,11 @@ interface EndPointAPI {
         @Path("user_id") user_id: String,
     ): Response<JsonObject>
 
+    @GET("/get-communitymembers/{community_id}")
+    suspend fun getCommunityMembers(
+        @Path("community_id") community_id: String
+    ): Response<JsonObject>
+
     @GET("/get-communitiescategory/{category_id}")
     suspend fun getCommunitiesCategory(
         @Path("category_id") category_id: String,
@@ -62,7 +67,12 @@ interface EndPointAPI {
     suspend fun getPostHome(): Response<JsonObject>
 
     @GET("/get-posts")
-    suspend fun getPost(): Response<JsonObject>
+    suspend fun getPosts(): Response<JsonObject>
+
+    @GET("/get-post/{post_id}")
+    suspend fun getPost(
+        @Path("post_id") post_id: String
+    ): Response<JsonObject>
 
     @GET("/get-ownedposts/{user_id}")
     suspend fun getOwnedPosts(
@@ -75,22 +85,20 @@ interface EndPointAPI {
     ): Response<JsonObject>
 
     @Multipart
-    @FormUrlEncoded
     @POST("/store-community")
     fun createCommunity(
-        @Part("description") description: RequestBody,
-        @Part community_logo: MultipartBody.Part?,
-        @Field("community_name") community_name: String,
-        @Field("community_description") community_description: String,
-        @Field("community_contact") community_contact: String,
-        @Field("category_id") category_id: String,
-        @Field("leader_id") leader_id: String,
-    ): Response<JsonObject>
+        @Part community_logo: MultipartBody.Part,
+        @Part("community_name") community_name: RequestBody,
+        @Part("community_description") community_description: RequestBody,
+        @Part("community_contact") community_contact: RequestBody,
+        @Part("category_id") category_id: RequestBody,
+        @Part("leader_id") leader_id: RequestBody,
+    ): Call<ResponseBody>
 
     @Multipart
     @POST("/store-post")
     fun createPostImage(
-        @Part post_image: MultipartBody.Part,
+        @Part post_image: MultipartBody.Part?,
         @Part("post_title") post_title: RequestBody,
         @Part("post_content") post_content: RequestBody,
         @Part("anonymous") anonymous: Boolean,
@@ -104,6 +112,74 @@ interface EndPointAPI {
         @Field("post_content") post_content: String,
         @Field("anonymous") anonymous: Boolean,
         @Field("uid") user_id: String,
+    ): Response<JsonObject>
+
+    @FormUrlEncoded
+    @POST("/store-comment")
+    suspend fun createComment(
+        @Field("comment_content") comment_content: String,
+        @Field("post_id") post_id: String,
+        @Field("user_id") user_id: String,
+    ): Response<JsonObject>
+
+    @Multipart
+    @PATCH("/update-profile")
+    fun updateProfile(
+        @Part user_image: MultipartBody.Part?,
+        @Part("user_displayname") user_displayname: RequestBody,
+        @Part("user_username") user_username: RequestBody,
+        @Part("user_email") user_email: RequestBody,
+        @Part("user_password") user_password: RequestBody,
+        @Part("user_id") user_id: RequestBody,
+    ): Call<JsonObject>
+
+    @DELETE("/remove-member/{community_member_id}")
+    suspend fun removeMember(
+        @Path("community_member_id") community_member_id: String,
+    ): Response<JsonObject>
+
+    @DELETE("/signout-community/{user_id}/{community_id}")
+    suspend fun signoutCommunity(
+        @Path("community_id") community_id: String,
+        @Path("user_id") user_id: String,
+    ): Response<JsonObject>
+
+    @FormUrlEncoded
+    @POST("/join-community")
+    suspend fun joinCommunity(
+        @Field("community_id") community_id: String,
+        @Field("user_id") user_id: String,
+    ): Response<JsonObject>
+
+    @Multipart
+    @PATCH("/update-post")
+    fun updatePost(
+        @Part post_image: MultipartBody.Part?,
+        @Part("post_title") post_title: RequestBody,
+        @Part("post_content") post_content: RequestBody,
+        @Part("anonymous") anonymous: Boolean,
+        @Part("post_id") post_id: RequestBody,
+    ): Call<JsonObject>
+
+    @DELETE("/delete-post/{post_id}")
+    suspend fun deletePost(
+        @Path("post_id") post_id: String,
+    ): Response<JsonObject>
+
+    @Multipart
+    @PATCH("/update-community")
+    fun updateCommunity(
+        @Part community_logo: MultipartBody.Part?,
+        @Part("community_name") community_name: RequestBody,
+        @Part("community_description") community_description: RequestBody,
+        @Part("community_contact") community_contact: RequestBody,
+        @Part("category_id") category_id: RequestBody,
+        @Part("community_id") community_id: RequestBody,
+    ): Call<JsonObject>
+
+    @DELETE("/delete-community/{community_id}")
+    suspend fun deleteCommunity(
+        @Path("community_id") community_id: String,
     ): Response<JsonObject>
 
 }

@@ -18,10 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -49,6 +46,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
 import com.imtuc.talknity.components.DiscussionCard
 import com.imtuc.talknity.components.IndividualCommunity
+import com.imtuc.talknity.components.OwnedCommunityCard
 import com.imtuc.talknity.model.Community
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
@@ -62,6 +60,10 @@ fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Lifec
         mutableStateListOf<Community>()
     }
 
+    var communityLoading = remember {
+        mutableStateOf(true)
+    }
+
     val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
 
     communityViewModel.getOwnedCommunities(preferences.getInt("user_id", -1).toString())
@@ -72,8 +74,10 @@ fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Lifec
             community.clear()
             community.addAll(communityViewModel.ownedCommunities.value!!)
 
+            communityLoading.value = false
             Log.d("Owned Communities", community.toString())
         } else {
+            communityLoading.value = true
             Toast.makeText(context, communityViewModel.ownedCommunitiesError.value, Toast.LENGTH_SHORT).show()
         }
     })
@@ -95,10 +99,20 @@ fun OwnedCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Lifec
         ) {
             items(1) {
                 OwnedCommunityTop(navController)
+
+                if (communityLoading.value) {
+                    Spacer(modifier = Modifier.height(250.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+                        CircularProgressIndicator(
+                            color = SoftBlack
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(250.dp))
+                }
             }
 
             itemsIndexed(items = community) { index, item ->
-                IndividualCommunity(community = item)
+                OwnedCommunityCard(community = item, navController = navController, communityViewModel = communityViewModel, lifecycleOwner = lifecycleOwner)
 
                 if (index == community.size - 1) {
                     Spacer(modifier = Modifier.height(24.dp))

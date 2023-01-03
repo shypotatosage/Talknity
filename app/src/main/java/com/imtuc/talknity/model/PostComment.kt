@@ -1,6 +1,6 @@
 package com.imtuc.talknity.model
 
-data class Post(
+data class PostComment(
     var post_id: String,
     var post_title: String,
     var post_content: String,
@@ -8,7 +8,7 @@ data class Post(
     var anonymous: Boolean,
     var created_at: String,
     var creator: User,
-    var comment_count: String
+    var comments: ArrayList<Comment>
 ) {
 
 }

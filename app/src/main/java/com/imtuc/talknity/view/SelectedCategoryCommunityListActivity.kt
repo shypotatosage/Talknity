@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -75,6 +76,10 @@ fun SelectedCategoryCommunityList(category_id: String, category_name: String, co
         mutableStateListOf<Community>()
     }
 
+    var categoryLoading = remember {
+        mutableStateOf(true)
+    }
+
     communityViewModel.getCommunitiesCategory(category_id)
 
     communityViewModel.categoryCommunities.observe(lifecycleOwner, Observer {
@@ -83,8 +88,10 @@ fun SelectedCategoryCommunityList(category_id: String, category_name: String, co
             community.clear()
             community.addAll(communityViewModel.categoryCommunities.value!!)
 
+            categoryLoading.value = false
             Log.d("Selected Category Communities", community.toString())
         } else {
+            categoryLoading.value = true
             Toast.makeText(context, communityViewModel.categoryCommunitiesError.value, Toast.LENGTH_SHORT).show()
         }
     })
@@ -229,12 +236,21 @@ fun SelectedCategoryCommunityList(category_id: String, category_name: String, co
                         )
                     }
                 }
+                if (categoryLoading.value) {
+                    Spacer(modifier = Modifier.height(200.dp))
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+                        CircularProgressIndicator(
+                            color = SoftBlack
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(200.dp))
+                }
 
             }
         }
 
         itemsIndexed(items = community) { index, item ->
-            IndividualCommunity(community = item)
+            IndividualCommunity(community = item, navController = navController)
         }
     }
 }

@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +42,8 @@ import com.imtuc.talknity.components.CommunityCategoryCard
 import com.imtuc.talknity.components.DiscussionCard
 import com.imtuc.talknity.model.CommunityCategory
 import com.imtuc.talknity.model.Post
+import com.imtuc.talknity.navigation.BottomNavScreen
+import com.imtuc.talknity.navigation.CustomBottomNavigation
 import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.Gray300
 import com.imtuc.talknity.view.ui.theme.GrayBorder
@@ -68,7 +68,7 @@ class CommunityCategoriesActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityCategories(
     communityViewModel: CommunityViewModel,
@@ -85,6 +85,10 @@ fun CommunityCategories(
         mutableStateListOf<CommunityCategory>()
     }
 
+    var categoryLoading = remember {
+        mutableStateOf(true)
+    }
+
     communityViewModel.getCategory()
 
     communityViewModel.category.observe(lifecycleOwner, Observer { response ->
@@ -92,8 +96,10 @@ fun CommunityCategories(
             category.clear()
             category.addAll(communityViewModel.category.value!!)
 
+            categoryLoading.value = false
             Log.e("Categories", category.toString())
         } else {
+            categoryLoading.value = true
             Toast.makeText(context, communityViewModel.categoryError.value, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -230,6 +236,15 @@ fun CommunityCategories(
                                 )
                             }
                         }
+                        if (categoryLoading.value) {
+                            Spacer(modifier = Modifier.height(200.dp))
+                            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
+                                CircularProgressIndicator(
+                                    color = SoftBlack
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(200.dp))
+                        }
                     }
                 }
 
@@ -240,6 +255,10 @@ fun CommunityCategories(
                     modifier = Modifier.padding(16.dp, 0.dp)
                 ) { item ->
                     CommunityCategoryCard(item, navController = navController)
+                }
+                
+                items(1) {
+                    Spacer(modifier = Modifier.height(25.dp))
                 }
             }
         }

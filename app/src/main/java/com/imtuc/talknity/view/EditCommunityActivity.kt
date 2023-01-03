@@ -5,83 +5,53 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
 import android.provider.MediaStore
-import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.fontResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
+import com.imtuc.talknity.helper.Const
 import com.imtuc.talknity.model.CommunityCategory
 import com.imtuc.talknity.view.ui.theme.*
 import com.imtuc.talknity.viewmodel.CommunityViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-@AndroidEntryPoint
-class CreateCommunityActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            TalknityTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-//                    CreateCommunity()
-                }
-            }
-        }
-    }
-}
-
 @Composable
-fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
+fun EditCommunity(
+    community_id: String,
+    communityViewModel: CommunityViewModel,
+    lifecycleOwner: LifecycleOwner,
+    navController: NavHostController
+) {
     var selectedCategory = remember {
         mutableStateOf("")
     }
@@ -102,23 +72,28 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
         mutableStateOf("")
     }
 
+    var communityLogo = remember {
+        mutableStateOf("")
+    }
+
     var expanded by remember {
         mutableStateOf(false)
     }
-    
+
     var imageUri by remember {
         mutableStateOf<Uri?>(null)
     }
 
     val context = LocalContext.current
-    
+
     val bitmap = remember {
         mutableStateOf<Bitmap?>(null)
     }
 
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-    }
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+            imageUri = uri
+        }
 
     imageUri?.let {
         if (Build.VERSION.SDK_INT < 28) {
@@ -143,33 +118,34 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
         }
     })
 
-    var imageRequired = remember {
-        mutableStateOf(false)
-    }
+    communityViewModel.getCommunityUpdate(community_id)
 
-    var nameRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var categoryRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var descriptionRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var contactRequired = remember {
-        mutableStateOf(false)
-    }
-
-    communityViewModel.communitycreate.observe(lifecycleOwner, Observer { response ->
+    communityViewModel.getCommunityUpdateError.observe(lifecycleOwner, Observer { response ->
         if (response != "") {
-            if (response == "Community Successfully Created") {
-                communityViewModel.resetCommunityCreate()
-                navController.popBackStack()
+            if (response == "Success") {
+                communityName.value = communityViewModel.getCommunityUpdate.value!!.community_name
+                communityDescription.value =
+                    communityViewModel.getCommunityUpdate.value!!.community_description
+                contactInformation.value =
+                    communityViewModel.getCommunityUpdate.value!!.community_contact
+                selectedCategory.value =
+                    communityViewModel.getCommunityUpdate.value!!.community_category.category_id
+                selectedCategoryName.value =
+                    communityViewModel.getCommunityUpdate.value!!.community_category.category_name
+                communityLogo.value = communityViewModel.getCommunityUpdate.value!!.community_logo
             } else {
                 Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+            }
+        }
+    })
+
+    communityViewModel.communityUpdate.observe(lifecycleOwner, Observer { response ->
+        if (response != "") {
+            Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+
+            if (response == "Community Successfully Updated") {
+                communityViewModel.resetCommunityUpdate()
+                navController.popBackStack()
             }
         }
     })
@@ -236,51 +212,21 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                     Surface(
                         modifier = Modifier
                             .size(160.dp, 160.dp)
-                            .background(color = Color.White)
+                            .background(color = GreyishWhite)
                             .align(alignment = Alignment.CenterVertically)
-                            .border(width = 0.6.dp, color = GrayBorder, shape = RoundedCornerShape(16.dp)),
+                            .clickable {
+                                launcher.launch("image/*")
+                            },
                         shape = RoundedCornerShape(16.dp),
-                        color = Color.White,
-                        shadowElevation = 5.dp
+                        color = GreyishWhite
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clickable {
-                                    launcher.launch("image/*")
-                                },
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.addimageicon),
-                                contentDescription = "Add Image",
-                                modifier = Modifier
-                                    .height(20.dp)
-                            )
-                            Text(
-                                text = "Upload Community's Logo",
-                                fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                                color = Gray300,
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center,
-                                modifier = Modifier
-                                    .padding(8.dp, 8.dp, 8.dp, 0.dp)
-                            )
-                        }
+                        Image(
+                            painter = rememberAsyncImagePainter(Const.BASE_URL + "/" + communityLogo.value),
+                            contentDescription = "Add Image",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
                     }
-                }
-                if (imageRequired.value && bitmap.value == null) {
-                    Text(
-                        text = "Community Logo is Required",
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(0.dp, 12.dp, 0.dp, 0.dp)
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
                 }
             } else {
                 Row(
@@ -301,7 +247,8 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                             bitmap = bitmap.value!!.asImageBitmap(),
                             contentDescription = "Add Image",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
                                 .clickable {
                                     launcher.launch("image/*")
                                 }
@@ -371,7 +318,9 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         )
                     )
                 }
-                if (nameRequired.value && (communityName.value.trim().isEmpty() || communityName.value.trim().length > 100)) {
+                if ((communityName.value.trim()
+                        .isEmpty() || communityName.value.trim().length > 100)
+                ) {
                     Text(
                         text =
                         if (communityName.value.trim().length <= 100) {
@@ -504,7 +453,7 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         }
                     }
                 }
-                if (categoryRequired.value && selectedCategory.value.isEmpty()) {
+                if (selectedCategory.value.isEmpty()) {
                     Text(
                         text = "You must select a Category",
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
@@ -577,7 +526,7 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         )
                     )
                 }
-                if (descriptionRequired.value && (communityDescription.value.trim().length < 25)) {
+                if ((communityDescription.value.trim().length < 25)) {
                     Text(
                         text =
                         if (communityDescription.value.trim().isEmpty()) {
@@ -655,7 +604,7 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         )
                     )
                 }
-                if (contactRequired.value && contactInformation.value.trim().isEmpty()) {
+                if (contactInformation.value.trim().isEmpty()) {
                     Text(
                         text = "Contact Information is required",
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
@@ -677,72 +626,45 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                             .padding(0.dp, 48.dp, 0.dp, 0.dp)
                     )
 
-                    Row(horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(0.dp, 6.dp, 0.dp, 0.dp)) {
+                    Row(
+                        horizontalArrangement = Arrangement.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 6.dp, 0.dp, 0.dp)
+                    ) {
                         Button(
                             onClick = {
-                                if (bitmap.value == null) {
-                                    imageRequired.value = true
-                                } else {
-                                    imageRequired.value = false
-                                }
+                                if (!(contactInformation.value.trim().isEmpty() || (communityName.value.trim().isEmpty() || communityName.value.trim().length > 100) || selectedCategory.value.isEmpty() || (communityDescription.value.trim().length < 25))) {
+                                    var community_logo: MultipartBody.Part?
 
-                                if (communityName.value.trim().length > 100 || communityName.value.trim().isEmpty()) {
-                                    nameRequired.value = true
-                                } else {
-                                    nameRequired.value = false
-                                }
-
-                                if (communityDescription.value.trim().length < 25) {
-                                    descriptionRequired.value = true
-                                } else {
-                                    descriptionRequired.value = false
-                                }
-
-                                if (contactInformation.value.trim().isEmpty()) {
-                                    contactRequired.value = true
-                                } else {
-                                    contactRequired.value = false
-                                }
-
-                                if (selectedCategory.value.trim().isEmpty()) {
-                                    categoryRequired.value = true
-                                } else {
-                                    categoryRequired.value = false
-                                }
-
-                                if (!(imageRequired.value || nameRequired.value || descriptionRequired.value || contactRequired.value || categoryRequired.value)) {
-                                    var community_logo = prepareFilePart("community_logo", bitmap.value!!)
-
-                                    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
-
-                                    if (preferences.getInt("user_id", -1).toString() != "-1") {
-                                        communityViewModel.createCommunity(
-                                            community_logo = community_logo,
-                                            community_name = communityName.value.trim()
-                                                .toRequestBody(),
-                                            community_description = communityDescription.value.trim()
-                                                .toRequestBody(),
-                                            community_contact = contactInformation.value.trim()
-                                                .toRequestBody(),
-                                            category_id = selectedCategory.value.trim()
-                                                .toRequestBody(),
-                                            leader_id = preferences.getInt("user_id", -1).toString()
-                                                .toRequestBody()
-                                        )
+                                    if (bitmap.value != null) {
+                                        community_logo =
+                                            prepareFilePart("community_logo", bitmap.value!!)
                                     } else {
-                                        Toast.makeText(context, "Failed To Create Community Due To Invalid User", Toast.LENGTH_SHORT).show()
+                                        community_logo = null
                                     }
+
+                                    communityViewModel.updateCommunity(
+                                        community_logo = community_logo,
+                                        community_name = communityName.value.trim()
+                                            .toRequestBody(),
+                                        community_description = communityDescription.value.trim()
+                                            .toRequestBody(),
+                                        category_id = selectedCategory.value.trim()
+                                            .toRequestBody(),
+                                        community_contact = contactInformation.value.trim()
+                                            .toRequestBody(),
+                                        community_id = community_id.toRequestBody()
+                                    )
                                 }
                             },
                             modifier = Modifier
                                 .padding(8.dp, 0.dp),
                             shape = RoundedCornerShape(50.dp),
-                            colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)) {
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Orange500)
+                        ) {
                             Text(
-                                text = "Create Community",
+                                text = "Update Community",
                                 fontSize = 20.sp,
                                 fontFamily = FontFamily(Font(R.font.opensans_bold)),
                                 color = GreyishWhite
@@ -752,13 +674,5 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun CreateCommunityPreview() {
-    TalknityTheme {
-//        CreateCommunity()
     }
 }

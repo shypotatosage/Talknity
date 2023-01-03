@@ -55,11 +55,11 @@ class HomeViewModel @Inject constructor(
                         for (item in arr) {
                             var community_id = item.asJsonObject["id"].asString
                             var community_name = item.asJsonObject["community_name"].asString
-                            var community_description =
-                                item.asJsonObject["community_description"].asString
+                            var community_description = item.asJsonObject["community_description"].asString
                             var community_contact = item.asJsonObject["community_contact"].asString
                             var community_logo = item.asJsonObject["community_logo"].asString
                             var created_at = item.asJsonObject["created_at"].asString
+                            var count = item.asJsonObject["member_count"].asString
 
                             var user = item.asJsonObject["leader"]
 
@@ -102,7 +102,8 @@ class HomeViewModel @Inject constructor(
                                 community_logo,
                                 created_at,
                                 categoryModel,
-                                userModel
+                                userModel,
+                                count
                             )
 
                             tmpArrList.add(community)
@@ -120,8 +121,6 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
-
-    fun clearCommunityError() {}
 
     val _posts: MutableLiveData<List<Post>> by lazy {
         MutableLiveData<List<Post>>()
@@ -158,6 +157,7 @@ class HomeViewModel @Inject constructor(
                             var post_image = item.asJsonObject["post_image"].asString
                             var anonymous = item.asJsonObject["anonymous"].asString.toBoolean()
                             var created_at = item.asJsonObject["created_at"].asString
+                            var comment_count = item.asJsonObject["comment_count"].asString
 
                             var user = item.asJsonObject["user"]
 
@@ -182,7 +182,8 @@ class HomeViewModel @Inject constructor(
                                 post_image,
                                 anonymous,
                                 created_at,
-                                userModel
+                                userModel,
+                                comment_count
                             )
 
                             tmpArrList.add(post)
@@ -191,7 +192,7 @@ class HomeViewModel @Inject constructor(
 
                     _posts.value = tmpArrList
 
-                    Log.e("Community Data", _posts.value.toString())
+                    Log.e("Post Data", _posts.value.toString())
                 } else {
                     _posterror.value = response.message()
                 }

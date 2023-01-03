@@ -1,9 +1,22 @@
 package com.imtuc.talknity.view
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
+import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,15 +29,14 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -32,14 +44,26 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
+import com.imtuc.talknity.helper.Const
+import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.*
+import com.imtuc.talknity.viewmodel.AuthViewModel
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.util.regex.Pattern
 
 class EditProfileActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +75,7 @@ class EditProfileActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    EditProfile()
+//                    EditProfile()
                 }
             }
         }
@@ -59,21 +83,29 @@ class EditProfileActivity : ComponentActivity() {
 }
 
 @Composable
-fun EditProfile() {
+fun EditProfile(authViewModel: AuthViewModel, user_displayname: String, user_username: String, user_email: String, user_image: String, navController: NavHostController, lifecycleOwner: LifecycleOwner) {
     var displayName = remember {
-        mutableStateOf("")
+        mutableStateOf(user_displayname)
     }
 
     var username = remember {
-        mutableStateOf("")
+        mutableStateOf(user_username)
     }
 
     var email = remember {
-        mutableStateOf("")
+        mutableStateOf(user_email)
     }
 
-    var confirmPasswordDisplay = remember {
-        mutableStateOf("")
+    var profileImage = remember {
+        mutableStateOf(user_image)
+    }
+
+    var passwordRequired = remember {
+        mutableStateOf(false)
+    }
+
+    var passwordNotMatch = remember {
+        mutableStateOf(false)
     }
 
     var passwordVisibility = remember {
@@ -84,19 +116,61 @@ fun EditProfile() {
         mutableStateOf("")
     }
 
-    var passwordInvisible = passwordNotVisible(confirmPassword.value)
-
     val image = if (passwordVisibility.value) {
         Icons.Filled.Visibility
     } else {
         Icons.Filled.VisibilityOff
     }
 
-    if (passwordVisibility.value) {
-        confirmPasswordDisplay.value = passwordInvisible
-    } else {
-        confirmPasswordDisplay.value = confirmPassword.value
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
     }
+
+    val context = LocalContext.current
+
+    val bitmap = remember {
+        mutableStateOf<Bitmap?>(null)
+    }
+
+    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
+        imageUri = uri
+    }
+
+    imageUri?.let {
+        if (Build.VERSION.SDK_INT < 28) {
+            bitmap.value = MediaStore.Images
+                .Media.getBitmap(context.contentResolver, it)
+        } else {
+            val source = ImageDecoder.createSource(context.contentResolver, it)
+            bitmap.value = ImageDecoder.decodeBitmap(source)
+        }
+    }
+
+    val launcherPermission = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission Accepted: Do something
+            Log.d("ExampleScreen","PERMISSION GRANTED")
+        } else {
+            // Permission Denied: Do something
+            Log.d("ExampleScreen","PERMISSION DENIED")
+        }
+    }
+
+    authViewModel.profileUpdate.observe(lifecycleOwner, Observer { response ->
+        if (response == "Profile Successfully Updated") {
+            authViewModel.resetProfileUpdate()
+            navController.popBackStack()
+        } else if (response != "") {
+            if (response == "Password does not match!") {
+                passwordNotMatch.value = true
+            } else {
+                Toast.makeText(context, "Failed To Update Profile\n" + response, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    })
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
@@ -110,17 +184,88 @@ fun EditProfile() {
                 .navigationBarsWithImePadding()
                 .verticalScroll(rememberScrollState())
         ) {
+            if (bitmap.value == null) {
                 Image(
-
-                    painter = painterResource(id = R.drawable.dummypict),
+                    painter =
+                    if (profileImage.value == "empty") {
+                        painterResource(id = R.drawable.defaultprofilepicture)
+                    } else {
+                           rememberAsyncImagePainter(Const.BASE_URL + "/images/user/" + profileImage.value)
+                           },
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .height(210.dp)
-//                        .clip(RoundedCornerShape(15.dp, 15.dp, 0.dp, 0.dp))
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .clickable {
+                            when (PackageManager.PERMISSION_GRANTED) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                ) -> {
+                                    Log.d("ExampleScreen", "Code requires permission")
+                                }
+                                else -> {
+                                    // Asking for permission
+                                    launcherPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                }
+                            }
 
+                            when (PackageManager.PERMISSION_GRANTED) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) -> {
+                                    // Some works that require permission
+                                    launcher.launch("image/*")
+                                    Log.d("ExampleScreen", "Code requires permission")
+                                }
+                                else -> {
+                                    // Asking for permission
+                                    launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                }
+                            }
+                        },
                     contentScale = ContentScale.Crop
                 )
+            } else {
+                Image(
+                    bitmap = bitmap.value!!.asImageBitmap(),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .height(210.dp)
+                        .fillMaxWidth()
+                        .clickable {
+                            when (PackageManager.PERMISSION_GRANTED) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE
+                                ) -> {
+                                    Log.d("ExampleScreen", "Code requires permission")
+                                }
+                                else -> {
+                                    // Asking for permission
+                                    launcherPermission.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                                }
+                            }
+
+                            when (PackageManager.PERMISSION_GRANTED) {
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                                ) -> {
+                                    // Some works that require permission
+                                    launcher.launch("image/*")
+                                    Log.d("ExampleScreen", "Code requires permission")
+                                }
+                                else -> {
+                                    // Asking for permission
+                                    launcherPermission.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                }
+                            }
+                        },
+                    contentScale = ContentScale.Crop
+                )
+            }
 //            Row(
 //                modifier = Modifier
 //                    .padding(0.dp, 28.dp, 0.dp, 28.dp)
@@ -200,6 +345,16 @@ fun EditProfile() {
                         )
                     )
                 }
+                if (displayName.value.trim().isEmpty()) {
+                    Text(
+                        text = "Display Name is required",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
                 Text(
                     text = "Username",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
@@ -253,6 +408,17 @@ fun EditProfile() {
                             fontFamily = FontFamily(Font(R.font.opensans_regular)),
                             fontSize = 16.sp
                         )
+                    )
+                }
+                if (!Pattern.compile("^(?=.{8,20}\$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])\$")
+                        .matcher(username.value.trim()).matches()) {
+                    Text(
+                        text = "Must be 8-20 characters, only . and _ allowed but may not end/start with . or _",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
                     )
                 }
                 Text(
@@ -310,6 +476,18 @@ fun EditProfile() {
                         )
                     )
                 }
+                if (!Patterns.EMAIL_ADDRESS.matcher(email.value.trim())
+                        .matches()
+                ) {
+                    Text(
+                        text = "Email is not valid",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
                 Text(
                     text = "Confirm Password",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
@@ -327,16 +505,23 @@ fun EditProfile() {
                     shadowElevation = 4.dp
                 ) {
                     BasicTextField(
-                        value = confirmPasswordDisplay.value,
+                        value = confirmPassword.value,
                         onValueChange = {
-                            confirmPasswordDisplay.value = it
                             confirmPassword.value = it
                         },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                         enabled = true,
                         singleLine = true,
+                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .border(
+                                BorderStroke(
+                                    width = 0.7.dp,
+                                    color = Gray300
+                                ),
+                                shape = RoundedCornerShape(25.dp)
+                            )
                             .navigationBarsWithImePadding(),
                         decorationBox = { innerTextField ->
                             TextFieldDefaults.textFieldColors(
@@ -344,21 +529,22 @@ fun EditProfile() {
                                 focusedIndicatorColor = Color.Transparent,
                                 unfocusedIndicatorColor = Color.Transparent,
                                 disabledIndicatorColor = Color.Transparent,
-                                textColor = SoftBlack
+                                textColor = SoftBlack,
                             )
                             Box(
                                 modifier = Modifier
                                     .padding(16.dp, 0.dp),
-                                contentAlignment = Alignment.CenterStart
                             ) {
-                                if (confirmPasswordDisplay.value.isEmpty()) {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(0.dp, 0.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    if (confirmPassword.value.isEmpty()) {
                                         Text(
-                                            text = "Confirm Password",
+                                            text = "Password",
                                             color = Gray300,
                                             fontSize = 16.sp,
                                             fontFamily = FontFamily(Font(R.font.opensans_regular))
@@ -368,20 +554,18 @@ fun EditProfile() {
                                         }) {
                                             Icon(imageVector = image, "")
                                         }
-                                    }
-                                    innerTextField()
-                                } else {
-                                    Row(
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxSize(),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        innerTextField()
-                                        IconButton(onClick = {
-                                            passwordVisibility.value = !passwordVisibility.value
-//                                            passwordStar.value = test
-                                        }) {
-                                            Icon(imageVector = image, "")
+                                    } else {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxSize(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            innerTextField()
+                                            IconButton(onClick = {
+                                                passwordVisibility.value = !passwordVisibility.value
+                                            }) {
+                                                Icon(imageVector = image, "")
+                                            }
                                         }
                                     }
                                 }
@@ -393,12 +577,34 @@ fun EditProfile() {
                         )
                     )
                 }
+                if (passwordRequired.value) {
+                    Text(
+                        text = "You must confirm your password",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
+                if (passwordNotMatch.value) {
+                    Text(
+                        text = "Password does not match",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(0.dp, 32.dp, 0.dp, 128.dp)) {
-                    Button(onClick = { /*TODO*/ },
+                        .padding(0.dp, 32.dp, 0.dp, 60.dp)) {
+                    Button(onClick = {
+                            navController.popBackStack()
+                        },
                         modifier = Modifier
                             .padding(8.dp, 0.dp),
                         shape = RoundedCornerShape(50.dp),
@@ -411,7 +617,42 @@ fun EditProfile() {
                         )
                     }
                     Spacer(modifier = Modifier.width(4.dp))
-                    Button(onClick = { /*TODO*/ },
+                    Button(onClick = {
+                            if (confirmPassword.value == "") {
+                                passwordRequired.value = true
+                            } else {
+                                passwordRequired.value = false
+                            }
+
+                            if (!(passwordRequired.value || displayName.value.trim().isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(email.value.trim()).matches() || !Pattern.compile("^(?=.{8,20}\$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])\$")
+                                    .matcher(username.value.trim()).matches())) {
+                                val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+
+                                if (bitmap.value == null) {
+                                    authViewModel.updateProfile(
+                                        user_image = null,
+                                        user_username = username.value.toRequestBody(),
+                                        user_displayname = displayName.value.toRequestBody(),
+                                        user_email = email.value.toRequestBody(),
+                                        user_password = confirmPassword.value.toRequestBody(),
+                                        user_id = preferences.getInt("user_id", -1).toString()
+                                            .toRequestBody()
+                                    )
+                                } else {
+                                    var user_img = prepareFilePart("user_image", bitmap.value!!)
+
+                                    authViewModel.updateProfile(
+                                        user_image = user_img,
+                                        user_username = username.value.toRequestBody(),
+                                        user_displayname = displayName.value.toRequestBody(),
+                                        user_email = email.value.toRequestBody(),
+                                        user_password = confirmPassword.value.toRequestBody(),
+                                        user_id = preferences.getInt("user_id", -1).toString()
+                                            .toRequestBody()
+                                    )
+                                }
+                            }
+                        },
                         modifier = Modifier
                             .padding(8.dp, 0.dp),
                         shape = RoundedCornerShape(50.dp),
@@ -426,23 +667,5 @@ fun EditProfile() {
                 }
             }
         }
-    }
-}
-
-fun passwordNotVisible(text: String): String {
-    var result = ""
-
-    for (Char in text) {
-        result += "*"
-    }
-
-    return result
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun DefaultPreview() {
-    TalknityTheme {
-        EditProfile()
     }
 }
