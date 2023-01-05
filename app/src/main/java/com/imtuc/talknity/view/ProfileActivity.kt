@@ -419,6 +419,39 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                             }
                         }
                     }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 8.dp, 0.dp, 20.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+                                var editor = preferences.edit()
+
+                                editor.clear()
+                                editor.commit()
+
+                                navController.navigate(
+                                    Screen.Splash.route
+                                )
+                            },
+                            modifier = Modifier
+                                .padding(8.dp, 0.dp),
+                            shape = RoundedCornerShape(50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Red500)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(8.dp, 0.dp),
+                                text = "Logout",
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily(Font(R.font.opensans_bold)),
+                                color = GreyishWhite
+                            )
+                        }
+                    }
                     Spacer(modifier = Modifier.height(72.dp))
                 }
             }
