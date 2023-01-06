@@ -189,7 +189,7 @@ fun EditCommunity(
                 horizontalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = "Create A ",
+                    text = "Update ",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                     fontSize = 30.sp,
                     color = SoftBlack

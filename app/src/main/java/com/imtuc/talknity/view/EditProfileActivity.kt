@@ -112,6 +112,14 @@ fun EditProfile(authViewModel: AuthViewModel, user_displayname: String, user_use
         mutableStateOf(false)
     }
 
+    var emailExists = remember {
+        mutableStateOf(false)
+    }
+
+    var usernameExists = remember {
+        mutableStateOf(false)
+    }
+
     var confirmPassword = remember {
         mutableStateOf("")
     }
@@ -165,6 +173,10 @@ fun EditProfile(authViewModel: AuthViewModel, user_displayname: String, user_use
         } else if (response != "") {
             if (response == "Password does not match!") {
                 passwordNotMatch.value = true
+            } else if (response == "Bad Gateway") {
+                usernameExists.value = true
+            } else if (response == "Forbidden") {
+                emailExists.value = true
             } else {
                 Toast.makeText(context, "Failed To Update Profile\n" + response, Toast.LENGTH_SHORT)
                     .show()
@@ -421,6 +433,16 @@ fun EditProfile(authViewModel: AuthViewModel, user_displayname: String, user_use
                             .padding(6.dp, 4.dp, 6.dp, 0.dp)
                     )
                 }
+                if (usernameExists.value) {
+                    Text(
+                        text = "Username is already taken",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
                 Text(
                     text = "Email",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
@@ -481,6 +503,16 @@ fun EditProfile(authViewModel: AuthViewModel, user_displayname: String, user_use
                 ) {
                     Text(
                         text = "Email is not valid",
+                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
+                        fontSize = 13.sp,
+                        color = Red500,
+                        modifier = Modifier
+                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
+                    )
+                }
+                if (emailExists.value) {
+                    Text(
+                        text = "Email is already taken",
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
                         fontSize = 13.sp,
                         color = Red500,
@@ -618,6 +650,10 @@ fun EditProfile(authViewModel: AuthViewModel, user_displayname: String, user_use
                     }
                     Spacer(modifier = Modifier.width(4.dp))
                     Button(onClick = {
+                            passwordNotMatch.value = false
+                            usernameExists.value = false
+                            emailExists.value = false
+
                             if (confirmPassword.value == "") {
                                 passwordRequired.value = true
                             } else {

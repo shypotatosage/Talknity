@@ -31,42 +31,41 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.imtuc.talknity.R
-import com.imtuc.talknity.components.DiscussionCard
-import com.imtuc.talknity.components.IndividualCommunity
+import com.imtuc.talknity.components.OwnedCommentCard
 import com.imtuc.talknity.components.OwnedDiscussionCard
-import com.imtuc.talknity.model.Community
+import com.imtuc.talknity.model.Comment
 import com.imtuc.talknity.model.Post
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
 import com.imtuc.talknity.viewmodel.PostViewModel
 
 @Composable
-fun OwnedDiscussions(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
+fun OwnedComments(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
     val context = LocalContext.current
 
-    var discussion = remember {
-        mutableStateListOf<Post>()
+    var comments = remember {
+        mutableStateListOf<Comment>()
     }
 
-    var discussionsLoading = remember {
+    var commentsLoading = remember {
         mutableStateOf(true)
     }
 
     val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
 
-    postViewModel.getOwnedPosts(preferences.getInt("user_id", -1).toString())
+    postViewModel.getOwnedComments(preferences.getInt("user_id", -1).toString())
 
-    postViewModel.ownedPosts.observe(lifecycleOwner, Observer {
+    postViewModel.ownedComments.observe(lifecycleOwner, Observer {
             response ->
-        if (postViewModel.ownedPostsError.value == "Get Data Successful") {
-            discussion.clear()
-            discussion.addAll(postViewModel.ownedPosts.value!!)
+        if (postViewModel.ownedCommentsError.value == "Get Data Successful") {
+            comments.clear()
+            comments.addAll(postViewModel.ownedComments.value!!)
 
-            discussionsLoading.value = false
-            Log.d("Owned Discussions", discussion.toString())
+            commentsLoading.value = false
+            Log.d("Owned Comments", comments.toString())
         } else {
-            discussionsLoading.value = true
-            Toast.makeText(context, postViewModel.ownedPostsError.value, Toast.LENGTH_SHORT).show()
+            commentsLoading.value = true
+            Toast.makeText(context, postViewModel.ownedCommentsError.value, Toast.LENGTH_SHORT).show()
         }
     })
 
@@ -86,9 +85,9 @@ fun OwnedDiscussions(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwne
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(1) {
-                OwnedDiscussionsTop(navController)
+                OwnedCommentsTop(navController)
 
-                if (discussionsLoading.value) {
+                if (commentsLoading.value) {
                     Spacer(modifier = Modifier.height(250.dp))
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center){
                         CircularProgressIndicator(
@@ -99,10 +98,10 @@ fun OwnedDiscussions(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwne
                 }
             }
 
-            itemsIndexed(items = discussion) { index, item ->
-                OwnedDiscussionCard(post = item, navController = navController, postViewModel = postViewModel, lifecycleOwner = lifecycleOwner)
+            itemsIndexed(items = comments) { index, item ->
+                OwnedCommentCard(comment = item, navController = navController, postViewModel = postViewModel, lifecycleOwner = lifecycleOwner)
 
-                if (index == discussion.size - 1) {
+                if (index == comments.size - 1) {
                     Spacer(modifier = Modifier.height(24.dp))
                 }
             }
@@ -111,7 +110,7 @@ fun OwnedDiscussions(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwne
 }
 
 @Composable
-fun OwnedDiscussionsTop(navController: NavHostController) {
+fun OwnedCommentsTop(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -157,7 +156,7 @@ fun OwnedDiscussionsTop(navController: NavHostController) {
                 color = SoftBlack
             )
             Text(
-                text = "Discussion",
+                text = "Comments",
                 fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
                 fontSize = 30.sp,
                 color = Orange500

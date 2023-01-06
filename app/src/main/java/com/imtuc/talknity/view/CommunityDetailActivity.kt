@@ -124,6 +124,8 @@ fun CommunityDetail(
 
     communityViewModel.communityMembers.observe(lifecycleOwner, Observer { response ->
         userIsLeader.value = false
+        userIsMember.value = ""
+
         if (communityViewModel.communityMembersError.value == "Get Data Successful") {
             displayName.value = response.community_name
             displayDesc.value = response.community_description
@@ -328,7 +330,7 @@ fun CommunityDetail(
                                             color = GreyishWhite
                                         )
                                     }
-                                } else if (userIsMember.value == "1") {
+                                } else if (userIsMember.value == "1" && !userIsLeader.value) {
                                     Button(
                                         onClick = {
                                             val preferences = context.getSharedPreferences(
