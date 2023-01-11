@@ -78,7 +78,11 @@ fun AnimatedSplashScreen(navController: NavHostController) {
         targetValue = if (startAnimation) { 1f } else { 0f },
         animationSpec = tween(
 <<<<<<< HEAD
+<<<<<<< HEAD
             durationMillis = 2000
+=======
+            durationMillis = 3000
+>>>>>>> parent of abe74f7 (Upd)
 =======
             durationMillis = 3000
 >>>>>>> parent of abe74f7 (Upd)

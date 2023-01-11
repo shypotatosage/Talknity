@@ -103,6 +103,7 @@ fun CommunityDetail() {
                     fontSize = 30.sp,
                     color = Color.White,
                 )
+<<<<<<< HEAD
 
             }
             Row(
@@ -357,6 +358,30 @@ fun CommunityDetail() {
                         columnCount = 3,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
 =======
+                        painter = painterResource(id = R.drawable.dummypict),
+                        contentDescription = "Profile Picture",
+>>>>>>> parent of abe74f7 (Upd)
+=======
+
+            }
+            Row(
+                modifier = Modifier
+                    .background(Orange500)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    shadowElevation = 8.dp,
+                    modifier = Modifier
+                        .wrapContentSize(align = Alignment.Center)
+                        .width(200.dp)
+                        .height(200.dp)
+                        .padding(0.dp, 13.dp)
+                        .shadow(10.dp)
+                ) {
+                    Image(
+
                         painter = painterResource(id = R.drawable.dummypict),
                         contentDescription = "Profile Picture",
 >>>>>>> parent of abe74f7 (Upd)
