@@ -83,6 +83,10 @@ fun IndividualDiscussion(post_id: String, postViewModel: PostViewModel, lifecycl
         mutableStateOf("")
     }
 
+    var isAnonymous = remember {
+        mutableStateOf(false)
+    }
+
     var user_image = remember {
         mutableStateOf("")
     }
@@ -105,6 +109,7 @@ fun IndividualDiscussion(post_id: String, postViewModel: PostViewModel, lifecycl
             post_image.value = response.post_image
             user_displayname.value = response.creator.user_displayname
             user_image.value = response.creator.user_image
+            isAnonymous.value = response.anonymous
 
             comments.clear()
             comments.addAll(response.comments)
@@ -345,7 +350,12 @@ fun IndividualDiscussion(post_id: String, postViewModel: PostViewModel, lifecycl
                             )
                         }
                         Text(
-                            text = user_displayname.value,
+                            text =
+                            if (!isAnonymous.value) {
+                                user_displayname.value
+                            } else {
+                                   "Unknown"
+                                   },
                             fontSize = 16.sp,
                             fontFamily = FontFamily(Font(R.font.opensans_bold)),
                             color = Orange500,

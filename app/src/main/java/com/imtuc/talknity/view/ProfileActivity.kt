@@ -367,7 +367,7 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Image(
-                                    painter = painterResource(id = R.drawable.discussionicon),
+                                    painter = painterResource(id = R.drawable.post),
                                     contentDescription = "Back",
                                     modifier = Modifier
                                         .padding(0.dp, 0.dp, 0.dp, 10.dp)
@@ -417,6 +417,81 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                                     fontFamily = FontFamily(Font(R.font.opensans_semibold)),
                                 )
                             }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                    ) {
+                        Button(
+                            shape = RoundedCornerShape(25.dp),
+                            elevation = ButtonDefaults.elevation(8.dp),
+                            modifier = Modifier
+                                .wrapContentSize(align = Alignment.Center)
+                                .padding(0.dp, 0.dp, 0.dp, 32.dp),
+                            onClick = {
+                                navController.navigate(Screen.OwnedComments.route)
+                            },
+                            contentPadding = PaddingValues(0.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                backgroundColor = Color.White
+                            )
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier
+                                    .padding(18.dp, 20.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.discussionicon),
+                                    contentDescription = "Back",
+                                    modifier = Modifier
+                                        .padding(0.dp, 0.dp, 0.dp, 10.dp)
+                                        .height(40.dp)
+                                )
+                                Text(
+                                    text = "Comments",
+                                    textAlign = TextAlign.Center,
+                                    fontSize = 18.sp,
+                                    color = Orange500,
+                                    fontFamily = FontFamily(Font(R.font.opensans_semibold)),
+                                )
+                            }
+                        }
+                    }
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(0.dp, 8.dp, 0.dp, 20.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+                                var editor = preferences.edit()
+
+                                editor.putInt("user_id", -1)
+                                editor.commit()
+
+                                navController.navigate(
+                                    Screen.Splash.route
+                                )
+                            },
+                            modifier = Modifier
+                                .padding(8.dp, 0.dp),
+                            shape = RoundedCornerShape(50.dp),
+                            colors = ButtonDefaults.buttonColors(backgroundColor = Red500)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(8.dp, 0.dp),
+                                text = "Logout",
+                                fontSize = 18.sp,
+                                fontFamily = FontFamily(Font(R.font.opensans_bold)),
+                                color = GreyishWhite
+                            )
                         }
                     }
                     Spacer(modifier = Modifier.height(72.dp))
