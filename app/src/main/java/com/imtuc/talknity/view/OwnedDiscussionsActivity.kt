@@ -63,7 +63,7 @@ fun OwnedDiscussions(postViewModel: PostViewModel, lifecycleOwner: LifecycleOwne
             discussion.addAll(postViewModel.ownedPosts.value!!)
 
             discussionsLoading.value = false
-            Log.d("Owned Discussions", discussion.toString())
+            Log.d("Owned Communities", discussion.toString())
         } else {
             discussionsLoading.value = true
             Toast.makeText(context, postViewModel.ownedPostsError.value, Toast.LENGTH_SHORT).show()

@@ -73,6 +73,8 @@ fun AnimatedSplashScreen(navController: NavHostController) {
 
     val context = LocalContext.current
 
+    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+
     val alphaAnimation = animateFloatAsState(
         targetValue = if (startAnimation) { 1f } else { 0f },
         animationSpec = tween(
@@ -81,9 +83,8 @@ fun AnimatedSplashScreen(navController: NavHostController) {
     )
 
     LaunchedEffect(key1 = true) {
-        val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
         startAnimation = true
-        delay(3000)
+        delay(4000)
         if (preferences.getInt("user_id", -1) > 0) {
             navController.popBackStack()
             navController.navigate(BottomNavScreen.Home.route)

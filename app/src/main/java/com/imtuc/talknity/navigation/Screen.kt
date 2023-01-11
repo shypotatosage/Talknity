@@ -39,7 +39,6 @@ sealed class Screen(val route: String) {
         }
     }
     object OwnedDiscussion:Screen(route = "owned_discussions_screen")
-    object OwnedComments:Screen(route = "owned_comments_screen")
     object CreateDiscussion:Screen(route = "create_discussions_screen")
     object EditDiscussion:Screen(route = "edit_discussions_screen/{post_id}") {
         fun passParam(

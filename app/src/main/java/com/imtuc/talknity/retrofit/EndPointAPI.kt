@@ -84,11 +84,6 @@ interface EndPointAPI {
         @Path("search_key") search_key: String
     ): Response<JsonObject>
 
-    @GET("/get-ownedcomments/{user_id}")
-    suspend fun getOwnedComments(
-        @Path("user_id") user_id: String,
-    ): Response<JsonObject>
-
     @Multipart
     @POST("/store-community")
     fun createCommunity(
@@ -170,18 +165,6 @@ interface EndPointAPI {
     suspend fun deletePost(
         @Path("post_id") post_id: String,
     ): Response<JsonObject>
-
-    @DELETE("/delete-comment/{comment_id}")
-    suspend fun deleteComment(
-        @Path("comment_id") comment_id: String,
-    ): Response<JsonObject>
-
-    @FormUrlEncoded
-    @PATCH("/update-comment")
-    fun updateComment(
-        @Field("comment_content") comment_content: String,
-        @Field("comment_id") comment_id: String,
-    ): Call<JsonObject>
 
     @Multipart
     @PATCH("/update-community")

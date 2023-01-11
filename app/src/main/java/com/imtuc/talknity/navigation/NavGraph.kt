@@ -150,12 +150,6 @@ fun SetupNavGraph(
         }
 
         composable(
-            route = Screen.OwnedComments.route
-        ) {
-            OwnedComments(postViewModel = postViewModel, lifecycleOwner = lifecycleOwner, navController = navController)
-        }
-
-        composable(
             route = Screen.CreateDiscussion.route
         ) {
             CreateDiscussion(postViewModel = postViewModel, navController = navController, lifecycleOwner = lifecycleOwner)

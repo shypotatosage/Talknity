@@ -45,9 +45,6 @@ class ItemRepository@Inject constructor(
     suspend fun searchPosts(key: String)
             = api.searchPosts(key)
 
-    suspend fun getOwnedComments(uid: String)
-            = api.getOwnedComments(uid)
-
     suspend fun createPost(
         post_title: String,
         post_content: String,
@@ -84,17 +81,6 @@ class ItemRepository@Inject constructor(
         post_id: String
     )
             = api.deletePost(post_id)
-
-    suspend fun deleteComment(
-        comment_id: String
-    )
-            = api.deleteComment(comment_id)
-
-    suspend fun updateComment(
-        comment_content: String,
-        comment_id: String
-    )
-            = api.updateComment(comment_content, comment_id)
 
     suspend fun deleteCommunity(
         community_id: String
