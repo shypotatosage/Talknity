@@ -274,31 +274,6 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                         .wrapContentSize(align = Alignment.Center)
                         .padding(0.dp, 32.dp)
                 ) {
-<<<<<<< HEAD
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .padding(15.dp, 15.dp)
-                            .clickable {
-                                navController.navigate(Screen.OwnedCommunity.route)
-                            },
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.discussionicon),
-                            contentDescription = "Back",
-                            modifier = Modifier
-                                .padding(0.dp, 0.dp, 0.dp, 10.dp)
-                                .height(40.dp)
-                        )
-                        Text(
-                            text = "Discussions",
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = Orange500,
-                            fontFamily = FontFamily(Font(R.font.opensans_semibold)),
-                        )
-                    }
                 }
                 Surface(
                     shape = RoundedCornerShape(25.dp),
@@ -331,7 +306,6 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                             fontFamily = FontFamily(Font(R.font.opensans_semibold)),
                         )
                     }
-<<<<<<< HEAD
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -366,9 +340,6 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                         }
                     }
                     Spacer(modifier = Modifier.height(72.dp))
-=======
->>>>>>> parent of abe74f7 (Upd)
-=======
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -425,7 +396,6 @@ fun Profile(authViewModel: AuthViewModel, navController: NavHostController, life
                             fontFamily = FontFamily(Font(R.font.opensans_semibold)),
                         )
                     }
->>>>>>> parent of abe74f7 (Upd)
                 }
             }
 

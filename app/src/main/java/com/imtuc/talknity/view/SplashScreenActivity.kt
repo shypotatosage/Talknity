@@ -77,15 +77,16 @@ fun AnimatedSplashScreen(navController: NavHostController) {
     val alphaAnimation = animateFloatAsState(
         targetValue = if (startAnimation) { 1f } else { 0f },
         animationSpec = tween(
-<<<<<<< HEAD
-<<<<<<< HEAD
-            durationMillis = 2000
-=======
-            durationMillis = 3000
->>>>>>> parent of abe74f7 (Upd)
-=======
-            durationMillis = 3000
->>>>>>> parent of abe74f7 (Upd)
+//            durationMillis = 2000
+//=======
+//            durationMillis = 3000
+//>>>>>>> parent of abe74f7 (Upd)
+//=======
+//            durationMillis = 3000
+//>>>>>>> parent of abe74f7 (Upd)
+//=======
+            durationMillis = 2500
+//>>>>>>> parent of 9ca68b3 (Update Community Member Limit)
         )
     )
 
