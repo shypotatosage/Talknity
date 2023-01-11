@@ -136,16 +136,27 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
         mutableStateOf(false)
     }
 
+    var discussionCreated = remember {
+        mutableStateOf(false)
+    }
+
     postViewModel.postcreate.observe(lifecycleOwner, Observer { response ->
         if (response != "") {
             if (response == "Discussion Successfully Created") {
-                postViewModel.resetPostCreate()
-                navController.popBackStack()
+                discussionCreated.value = true
             } else {
                 Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
             }
         }
     })
+
+    if (discussionCreated.value) {
+        postViewModel.resetPostCreate()
+
+        LaunchedEffect(true) {
+            navController.popBackStack()
+        }
+    }
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
@@ -401,7 +412,7 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                         )
                     )
                 }
-                if (titleRequired.value && postTitle.value.trim() == "") {
+                if (titleRequired.value) {
                     Text(
                         text =
                         if (postTitle.value.trim().length <= 100) {
@@ -439,9 +450,9 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                         },
                         enabled = true,
                         singleLine = false,
+                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .wrapContentHeight()
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
@@ -480,13 +491,13 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                         )
                     )
                 }
-                if (contentRequired.value && postContent.value.trim() == "") {
+                if (contentRequired.value) {
                     Text(
                         text =
-                        if (postContent.value.trim().isEmpty()) {
+                        if (postContent.value.trim().length >= 50) {
                             "Post Content is required"
                         } else {
-                               "Min. 25 characters"
+                               "Min. 50 characters"
                                },
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
                         fontSize = 13.sp,
@@ -551,31 +562,39 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
                                 titleRequired.value = false
                             }
 
-                            if (postContent.value.trim().length < 25) {
+                            if (postContent.value.trim().length < 50) {
                                 contentRequired.value = true
                             } else {
                                 contentRequired.value = false
                             }
 
                             if (!(titleRequired.value || contentRequired.value)) {
-                                var post_image: MultipartBody.Part?
-
                                 if (bitmap.value != null) {
-                                    post_image = prepareFilePart("post_image", bitmap.value!!)
+                                    var desc = createPartFromString("Upload Image Data")
+                                    var post_image = prepareFilePart("post_image", bitmap.value!!)
+
+                                    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
+
+                                    if (preferences.getInt("user_id", -1).toString() != "-1") {
+                                        postViewModel.createPostImage(
+                                            post_image,
+                                            postTitle.value.trim().toRequestBody(),
+                                            postContent.value.trim().toRequestBody(),
+                                            anonymousChecked.value,
+                                            preferences.getInt("user_id", -1).toString().toRequestBody()
+                                        )
+                                    }
                                 } else {
-                                    post_image = null
-                                }
+                                    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
 
-                                val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
-
-                                if (preferences.getInt("user_id", -1).toString() != "-1") {
-                                    postViewModel.createPostImage(
-                                        post_image,
-                                        postTitle.value.trim().toRequestBody(),
-                                        postContent.value.trim().toRequestBody(),
-                                        anonymousChecked.value,
-                                        preferences.getInt("user_id", -1).toString().toRequestBody()
-                                    )
+                                    if (preferences.getInt("user_id", -1).toString() != "-1") {
+                                        postViewModel.createPost(
+                                            postTitle.value.trim(),
+                                            postContent.value.trim(),
+                                            anonymousChecked.value,
+                                            preferences.getInt("user_id", -1).toString()
+                                        )
+                                    }
                                 }
                             }
                                          },
@@ -597,7 +616,11 @@ fun CreateDiscussion(postViewModel: PostViewModel, navController: NavHostControl
     }
 }
 
-fun prepareFilePart(partName: String, img: Bitmap): MultipartBody.Part {
+private fun createPartFromString(descriptionString: String): RequestBody {
+    return descriptionString.toRequestBody(MultipartBody.FORM)
+}
+
+private fun prepareFilePart(partName: String, img: Bitmap): MultipartBody.Part {
     // https://github.com/iPaulPro/aFileChooser/blob/master/aFileChooser/src/com/ipaulpro/afilechooser/utils/FileUtils.java
     // use the FileUtils to get the actual file by uri
     val file = savebitmap(img)
@@ -609,7 +632,7 @@ fun prepareFilePart(partName: String, img: Bitmap): MultipartBody.Part {
     return MultipartBody.Part.createFormData(partName, file.name, requestFile)
 }
 
-fun savebitmap(bmp: Bitmap): File? {
+private fun savebitmap(bmp: Bitmap): File? {
     val extStorageDirectory = Environment.getExternalStorageDirectory().toString()
     var outStream: OutputStream?
 

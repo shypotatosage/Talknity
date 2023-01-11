@@ -31,7 +31,6 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.imtuc.talknity.R
 import com.imtuc.talknity.helper.RequestMultiplePermissions
-import com.imtuc.talknity.navigation.BottomNavScreen
 import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.view.ui.theme.Orange500
 import com.imtuc.talknity.view.ui.theme.SoftBlack
@@ -78,7 +77,11 @@ fun AnimatedSplashScreen(navController: NavHostController) {
     val alphaAnimation = animateFloatAsState(
         targetValue = if (startAnimation) { 1f } else { 0f },
         animationSpec = tween(
+<<<<<<< HEAD
             durationMillis = 2000
+=======
+            durationMillis = 3000
+>>>>>>> parent of abe74f7 (Upd)
         )
     )
 
@@ -86,10 +89,8 @@ fun AnimatedSplashScreen(navController: NavHostController) {
         startAnimation = true
         delay(4000)
         if (preferences.getInt("user_id", -1) > 0) {
-            navController.popBackStack()
-            navController.navigate(BottomNavScreen.Home.route)
+            navController.navigate(Screen.Home.route)
         } else {
-            navController.popBackStack()
             navController.navigate(Screen.Login.route)
         }
     }

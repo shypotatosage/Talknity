@@ -1,6 +1,5 @@
 package com.imtuc.talknity.view
 
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
@@ -8,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.WindowManager
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
@@ -49,9 +47,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
-import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -60,7 +55,6 @@ import com.imtuc.talknity.model.CommunityCategory
 import com.imtuc.talknity.view.ui.theme.*
 import com.imtuc.talknity.viewmodel.CommunityViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import okhttp3.RequestBody.Companion.toRequestBody
 
 @AndroidEntryPoint
 class CreateCommunityActivity : ComponentActivity() {
@@ -81,12 +75,8 @@ class CreateCommunityActivity : ComponentActivity() {
 }
 
 @Composable
-fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: LifecycleOwner, navController: NavHostController) {
+fun CreateCommunity(communityViewModel: CommunityViewModel) {
     var selectedCategory = remember {
-        mutableStateOf("")
-    }
-
-    var selectedCategoryName = remember {
         mutableStateOf("")
     }
 
@@ -130,50 +120,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
         }
     }
 
-    var categories = remember {
-        mutableStateListOf<CommunityCategory>()
-    }
-
-    communityViewModel.getCategory()
-
-    communityViewModel.category.observe(lifecycleOwner, Observer { response ->
-        if (response != null) {
-            categories.clear()
-            categories.addAll(response)
-        }
-    })
-
-    var imageRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var nameRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var categoryRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var descriptionRequired = remember {
-        mutableStateOf(false)
-    }
-
-    var contactRequired = remember {
-        mutableStateOf(false)
-    }
-
-    communityViewModel.communitycreate.observe(lifecycleOwner, Observer { response ->
-        if (response != "") {
-            if (response == "Community Successfully Created") {
-                communityViewModel.resetCommunityCreate()
-                navController.popBackStack()
-            } else {
-                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
-            }
-        }
-    })
-
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
             modifier = Modifier
@@ -192,9 +138,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                     contentDescription = "Back",
                     modifier = Modifier
                         .height(28.dp)
-                        .clickable {
-                            navController.popBackStack()
-                        }
                 )
                 Text(
                     text = "Back",
@@ -270,24 +213,15 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         }
                     }
                 }
-                if (imageRequired.value && bitmap.value == null) {
-                    Text(
-                        text = "Community Logo is Required",
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(0.dp, 12.dp, 0.dp, 0.dp)
-                            .fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
-                }
             } else {
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(0.dp, 24.dp, 0.dp, 0.dp)
+                        .clickable {
+                            launcher.launch("image/*")
+                        }
                 ) {
                     Surface(
                         modifier = Modifier
@@ -302,9 +236,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                             contentDescription = "Add Image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
-                                .clickable {
-                                    launcher.launch("image/*")
-                                }
                         )
                     }
                 }
@@ -337,10 +268,8 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         },
                         enabled = true,
                         singleLine = true,
-                        maxLines = 1,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(color = Color.White)
                             .navigationBarsWithImePadding(),
                         decorationBox = { innerTextField ->
                             TextFieldDefaults.textFieldColors(
@@ -371,21 +300,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         )
                     )
                 }
-                if (nameRequired.value && (communityName.value.trim().isEmpty() || communityName.value.trim().length > 100)) {
-                    Text(
-                        text =
-                        if (communityName.value.trim().length <= 100) {
-                            "Community Name is required"
-                        } else {
-                            "Max. 100 characters"
-                        },
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
-                    )
-                }
                 Column {
                     Text(
                         text = "Category",
@@ -404,23 +318,21 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         shadowElevation = 4.dp
                     ) {
                         BasicTextField(
-                            value = selectedCategoryName.value,
-                            onValueChange = {},
+                            value = selectedCategory.value,
+                            onValueChange = {
+                                selectedCategory.value = it
+                            },
                             enabled = false,
                             singleLine = true,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(color = Color.White)
                                 .border(
                                     BorderStroke(
                                         width = 0.7.dp,
                                         color = GrayBorder
                                     ),
                                     shape = RoundedCornerShape(25.dp)
-                                )
-                                .clickable {
-                                    expanded = !expanded
-                                },
+                                ),
                             decorationBox = { innerTextField ->
                                 TextFieldDefaults.textFieldColors(
                                     backgroundColor = Color.Transparent,
@@ -454,6 +366,9 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                                                 contentDescription = "Dropdown",
                                                 modifier = Modifier
                                                     .height(12.dp)
+                                                    .clickable {
+                                                        expanded = !expanded
+                                                    }
                                             )
                                         }
                                         innerTextField()
@@ -469,6 +384,9 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                                                 contentDescription = "Dropdown",
                                                 modifier = Modifier
                                                     .width(24.dp)
+                                                    .clickable {
+                                                        expanded = !expanded
+                                                    }
                                             )
                                         }
                                     }
@@ -484,35 +402,19 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         expanded = expanded,
                         onDismissRequest = { expanded = false },
                         modifier = Modifier
-                            .background(color = Color.White)
+                            .background(color = GreyishWhite)
                             .fillMaxWidth(0.875f)
                             .align(alignment = Alignment.CenterHorizontally)
                     ) {
-                        categories.forEach { category ->
-                            if (category.category_id != "0") {
-                                DropdownMenuItem(onClick = {
-                                    selectedCategory.value = category.category_id
-                                    selectedCategoryName.value = category.category_name
-                                    expanded = false
-                                }) {
-                                    Text(
-                                        text = category.category_name,
-                                        modifier = Modifier.fillMaxWidth()
-                                    )
-                                }
-                            }
-                        }
+//                        categoryList.forEach { category ->
+//                            DropdownMenuItem(onClick = {
+//                                selectedCategory.value = category.category_id
+//                                expanded = false
+//                            }) {
+//                                Text(text = category.category_name, modifier = Modifier.fillMaxWidth())
+//                            }
+//                        }
                     }
-                }
-                if (categoryRequired.value && selectedCategory.value.isEmpty()) {
-                    Text(
-                        text = "You must select a Category",
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
-                    )
                 }
                 Text(
                     text = "Description",
@@ -539,7 +441,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         singleLine = false,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(color = Color.White)
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
@@ -577,21 +478,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         )
                     )
                 }
-                if (descriptionRequired.value && (communityDescription.value.trim().length < 25)) {
-                    Text(
-                        text =
-                        if (communityDescription.value.trim().isEmpty()) {
-                            "Community Description is required"
-                        } else {
-                            "Min. 25 characters"
-                        },
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
-                    )
-                }
                 Text(
                     text = "Contact Information",
                     fontFamily = FontFamily(Font(R.font.robotoslab_bold)),
@@ -617,7 +503,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         singleLine = false,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .background(color = Color.White)
                             .border(
                                 BorderStroke(
                                     width = 0.7.dp,
@@ -655,16 +540,6 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                         )
                     )
                 }
-                if (contactRequired.value && contactInformation.value.trim().isEmpty()) {
-                    Text(
-                        text = "Contact Information is required",
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
-                    )
-                }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -680,63 +555,8 @@ fun CreateCommunity(communityViewModel: CommunityViewModel, lifecycleOwner: Life
                     Row(horizontalArrangement = Arrangement.Center,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(0.dp, 6.dp, 0.dp, 0.dp)) {
-                        Button(
-                            onClick = {
-                                if (bitmap.value == null) {
-                                    imageRequired.value = true
-                                } else {
-                                    imageRequired.value = false
-                                }
-
-                                if (communityName.value.trim().length > 100 || communityName.value.trim().isEmpty()) {
-                                    nameRequired.value = true
-                                } else {
-                                    nameRequired.value = false
-                                }
-
-                                if (communityDescription.value.trim().length < 25) {
-                                    descriptionRequired.value = true
-                                } else {
-                                    descriptionRequired.value = false
-                                }
-
-                                if (contactInformation.value.trim().isEmpty()) {
-                                    contactRequired.value = true
-                                } else {
-                                    contactRequired.value = false
-                                }
-
-                                if (selectedCategory.value.trim().isEmpty()) {
-                                    categoryRequired.value = true
-                                } else {
-                                    categoryRequired.value = false
-                                }
-
-                                if (!(imageRequired.value || nameRequired.value || descriptionRequired.value || contactRequired.value || categoryRequired.value)) {
-                                    var community_logo = prepareFilePart("community_logo", bitmap.value!!)
-
-                                    val preferences = context.getSharedPreferences("user", Context.MODE_PRIVATE)
-
-                                    if (preferences.getInt("user_id", -1).toString() != "-1") {
-                                        communityViewModel.createCommunity(
-                                            community_logo = community_logo,
-                                            community_name = communityName.value.trim()
-                                                .toRequestBody(),
-                                            community_description = communityDescription.value.trim()
-                                                .toRequestBody(),
-                                            community_contact = contactInformation.value.trim()
-                                                .toRequestBody(),
-                                            category_id = selectedCategory.value.trim()
-                                                .toRequestBody(),
-                                            leader_id = preferences.getInt("user_id", -1).toString()
-                                                .toRequestBody()
-                                        )
-                                    } else {
-                                        Toast.makeText(context, "Failed To Create Community Due To Invalid User", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            },
+                        .padding()) {
+                        Button(onClick = { /*TODO*/ },
                             modifier = Modifier
                                 .padding(8.dp, 0.dp),
                             shape = RoundedCornerShape(50.dp),

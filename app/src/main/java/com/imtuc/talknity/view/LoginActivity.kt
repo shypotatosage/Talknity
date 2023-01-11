@@ -57,7 +57,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
-import com.imtuc.talknity.navigation.BottomNavScreen
 import com.imtuc.talknity.navigation.Screen
 import com.imtuc.talknity.viewmodel.AuthViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -382,9 +381,25 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner, navContr
 
     if (loginSuccess.value) {
         LaunchedEffect(Unit) {
-            navController.navigate(BottomNavScreen.Home.route) {
+            navController.navigate(Screen.Home.route) {
                 popUpTo(Screen.Login.route) { inclusive = true }
             }
         }
     }
+}
+
+fun countChar(text: String): String {
+    var count = 0
+    var result = ""
+
+    for (Char in text) {
+        count++
+    }
+
+    while (count > 0) {
+        result += "*"
+        count--
+    }
+
+    return result
 }

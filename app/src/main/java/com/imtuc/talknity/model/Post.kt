@@ -7,8 +7,7 @@ data class Post(
     var post_image: String,
     var anonymous: Boolean,
     var created_at: String,
-    var creator: User,
-    var comment_count: String
+    var creator: User
 ) {
 
 }

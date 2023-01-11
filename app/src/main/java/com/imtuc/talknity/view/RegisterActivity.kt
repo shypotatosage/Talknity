@@ -115,18 +115,6 @@ fun Register(
         mutableStateOf(false)
     }
 
-    var usernameExists = remember {
-        mutableStateOf(false)
-    }
-
-    var emailExists = remember {
-        mutableStateOf(false)
-    }
-
-    var registerSuccess = remember {
-        mutableStateOf(false)
-    }
-
     val image = if (passwordVisible.value) {
         Icons.Filled.Visibility
     } else {
@@ -137,26 +125,13 @@ fun Register(
         if (response != null) {
             if (response == "User Successfully Registered") {
                 authViewModel.resetRegister()
-                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
-                registerSuccess.value = true
+                context.startActivity(Intent(context, HomeActivity::class.java))
             } else {
-                if (response == "Bad Gateway") {
-                    usernameExists.value = true
-                } else if (response == "Bad Request") {
-                    emailExists.value = true
-                } else {
-                    Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
-                    authViewModel.resetRegister()
-                }
+                Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                authViewModel.resetRegister()
             }
         }
     })
-
-    if (registerSuccess.value) {
-        registerSuccess.value = false
-        navController.popBackStack()
-        navController.navigate(Screen.Login.route)
-    }
 
     ProvideWindowInsets(windowInsetsAnimationsEnabled = true) {
         Column(
@@ -229,9 +204,7 @@ fun Register(
                         fontSize = 16.sp
                     )
                 )
-                if (emailRequired.value && !Patterns.EMAIL_ADDRESS.matcher(email.value.trim())
-                        .matches()
-                ) {
+                if (emailRequired.value) {
                     Text(
                         text = "Email is not valid",
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
@@ -292,20 +265,9 @@ fun Register(
                         fontSize = 16.sp
                     )
                 )
-                if (usernameRequired.value && !Pattern.compile("^(?=.{8,20}\$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])\$")
-                        .matcher(username.value.trim()).matches()) {
+                if (usernameRequired.value) {
                     Text(
                         text = "Must be 8-20 characters, only . and _ allowed but may not end/start with . or _",
-                        fontFamily = FontFamily(Font(R.font.opensans_regular)),
-                        fontSize = 13.sp,
-                        color = Red500,
-                        modifier = Modifier
-                            .padding(6.dp, 4.dp, 6.dp, 0.dp)
-                    )
-                }
-                if (usernameExists.value) {
-                    Text(
-                        text = "Username already exists",
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
                         fontSize = 13.sp,
                         color = Red500,
@@ -390,9 +352,7 @@ fun Register(
                         fontSize = 16.sp
                     )
                 )
-                if (passwordRequired.value && !Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#\$%^&+=])[^-\\s]{8,}\$")
-                        .matcher(passwordValue.value).matches()
-                ) {
+                if (passwordRequired.value) {
                     Text(
                         text = "Min. 8 characters, 1 uppercase and lowercase letter, 1 number, 1 special character, and no whitespaces",
                         fontFamily = FontFamily(Font(R.font.opensans_regular)),
@@ -411,9 +371,6 @@ fun Register(
             ) {
                 Button(
                     onClick = {
-                        usernameExists.value = false
-                        emailExists.value = false
-
                         if (!Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#\$%^&+=])[^-\\s]{8,}\$")
                                 .matcher(passwordValue.value).matches()
                         ) {
@@ -445,6 +402,8 @@ fun Register(
                                 passwordValue.value
                             )
 
+                            navController.popBackStack()
+                            navController.navigate(Screen.Login.route)
                         }
                     },
                     modifier = Modifier
