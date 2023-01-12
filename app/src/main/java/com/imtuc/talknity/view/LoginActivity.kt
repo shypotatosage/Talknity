@@ -128,18 +128,14 @@ fun Login(authViewModel: AuthViewModel, lifecycleOwner: LifecycleOwner, navContr
                 if (response == "Password Is Incorrect") {
                     passwordRequired.value = true
                 } else {
+                    if (response == "Username/Email Is Not Registered Yet") {
+                        emailUsernameRequired.value = true
+                    } else {
+                        emailUsernameRequired.value = false
+                        Toast.makeText(context, response, Toast.LENGTH_SHORT).show()
+                    }
+
                     passwordRequired.value = false
-                }
-
-                if (response == "Username/Email Is Not Registered Yet") {
-                    emailUsernameRequired.value = true
-                } else {
-                    emailUsernameRequired.value = false
-                }
-
-                if (response != "Username/Email Is Not Registered Yet" && response != "Password Is Incorrect") {
-                    Toast.makeText(context, "Failed To Login\n" + response, Toast.LENGTH_SHORT)
-                        .show()
                 }
             } else {
                 loginSuccess.value = true

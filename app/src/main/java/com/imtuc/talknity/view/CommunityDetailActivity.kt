@@ -302,19 +302,15 @@ fun CommunityDetail(
                                 if ((userIsMember.value != "1") && !userIsLeader.value) {
                                     Button(
                                         onClick = {
-                                            if (communityViewModel.communityMembers.value!!.member_count == "100") {
-                                                Toast.makeText(context, "Oops, cannot join this community. Maximum member (100) has been reached", Toast.LENGTH_LONG).show()
-                                            } else {
-                                                val preferences = context.getSharedPreferences(
-                                                    "user",
-                                                    Context.MODE_PRIVATE
-                                                )
+                                            val preferences = context.getSharedPreferences(
+                                                "user",
+                                                Context.MODE_PRIVATE
+                                            )
 
-                                                communityViewModel.joinCommunity(
-                                                    community_id,
-                                                    preferences.getInt("user_id", -1).toString()
-                                                )
-                                            }
+                                            communityViewModel.joinCommunity(
+                                                community_id,
+                                                preferences.getInt("user_id", -1).toString()
+                                            )
                                         },
                                         modifier = Modifier
                                             .padding(13.dp, 63.dp, 0.dp, 0.dp),
